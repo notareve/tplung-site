@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="758" height="643" viewBox="0 0 758 643" role="img" aria-labelledby="title desc">
+  <title id="title">Скриншот HTML-отчета Raspi Collector</title>
+  <desc id="desc">Пример письма с отчетом TPlung: датчик, RSSI, батарея, влажность, температура и блоки энергометрии.</desc>
+
+  <rect width="758" height="643" fill="#ffffff"/>
+
+  <circle cx="51" cy="32" r="16" fill="#aee0ff"/>
+  <text x="47" y="37" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700" fill="#1475b8">R</text>
+  <text x="80" y="24" font-family="Segoe UI, Arial, sans-serif" font-size="14" fill="#111827">Raspi Collector</text>
+  <text x="179" y="24" font-family="Segoe UI, Arial, sans-serif" font-size="13" fill="#8a8f98">Вчера, 15:05</text>
+  <text x="80" y="43" font-family="Segoe UI, Arial, sans-serif" font-size="13" fill="#6b7280">Кому: вам</text>
+
+  <text x="33" y="70" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700" fill="#0f172a">Кипарис_Hr202</text>
+  <text x="33" y="88" font-family="Segoe UI, Arial, sans-serif" font-size="13" fill="#3b5c98">13-06-2026 15:04:15</text>
+
+  <rect x="625" y="61" width="59" height="19" rx="10" fill="#f3f7ff" stroke="#6aa2ff"/>
+  <text x="633" y="75" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#0045a8">-67 dBm</text>
+  <rect x="692" y="61" width="64" height="19" rx="10" fill="#006b1d"/>
+  <text x="701" y="75" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#ffffff">bat 100%</text>
+
+  <rect x="553" y="101" width="94" height="61" rx="6" fill="#f7fbff" stroke="#79a9ff"/>
+  <text x="563" y="121" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#0050a8">H0</text>
+  <text x="563" y="141" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700" fill="#00111f">51.8 %</text>
+  <rect x="657" y="101" width="92" height="61" rx="6" fill="#f7fbff" stroke="#79a9ff"/>
+  <text x="667" y="121" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#0050a8">T0</text>
+  <text x="667" y="141" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700" fill="#00111f">28.8 °C</text>
+
+  <text x="33" y="211" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700" fill="#010617">Энергия</text>
+  <text x="33" y="240" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700" fill="#0f172a">Электрощит</text>
+  <text x="33" y="257" font-family="Segoe UI, Arial, sans-serif" font-size="13" fill="#3b5c98">13-06-2026 15:04:15</text>
+
+  <rect x="625" y="229" width="59" height="21" rx="11" fill="#f3f7ff" stroke="#6aa2ff"/>
+  <text x="633" y="244" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#0045a8">-98 dBm</text>
+  <rect x="692" y="229" width="64" height="21" rx="11" fill="#006b1d"/>
+  <text x="701" y="244" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#ffffff">bat 100%</text>
+
+  <g id="meter1">
+    <rect x="33" y="271" width="724" height="265" rx="7" fill="#fffdf8" stroke="#f1bd65"/>
+    <text x="43" y="291" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#a36900">Счетчик 1</text>
+
+    <rect x="215" y="301" width="149" height="61" rx="7" fill="#fff8eb" stroke="#f2b544"/>
+    <text x="225" y="321" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#9b6100">Алексеевская, 19 (день)</text>
+    <text x="225" y="342" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700" fill="#00111f">10 052.170 kWh</text>
+
+    <rect x="400" y="301" width="148" height="61" rx="7" fill="#fff8eb" stroke="#f2b544"/>
+    <text x="410" y="321" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#9b6100">Алексеевская, 19 (ночь)</text>
+    <text x="410" y="342" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700" fill="#00111f">4 983.294 kWh</text>
+
+    <rect x="610" y="301" width="122" height="61" rx="7" fill="#eef6ff" stroke="#6aa2ff"/>
+    <text x="620" y="321" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#155bb0">ИТОГО</text>
+    <text x="620" y="342" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700" fill="#00111f">15 035.464 kWh</text>
+
+    <rect x="200" y="371" width="164" height="65" rx="7" fill="#f8fbff" stroke="#72a9ff" stroke-dasharray="4 3"/>
+    <text x="210" y="390" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#35649a">Сутки (13-06-2026 00:12:15)</text>
+    <text x="210" y="407" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700" fill="#00111f">2.600 kWh</text>
+    <text x="210" y="424" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#b06b00">21.81 ₽</text>
+
+    <rect x="385" y="371" width="164" height="65" rx="7" fill="#f8fbff" stroke="#72a9ff" stroke-dasharray="4 3"/>
+    <text x="395" y="390" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#35649a">Сутки (13-06-2026 00:12:15)</text>
+    <text x="395" y="407" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700" fill="#00111f">1.355 kWh</text>
+    <text x="395" y="424" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#b06b00">6.08 ₽</text>
+
+    <rect x="568" y="371" width="164" height="65" rx="7" fill="#f8fbff" stroke="#72a9ff" stroke-dasharray="4 3"/>
+    <text x="578" y="390" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#35649a">Месяц (04-06-2026 21:13:37)</text>
+    <text x="578" y="407" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700" fill="#00111f">58.781 kWh</text>
+    <text x="578" y="424" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#b06b00">427.51 ₽</text>
+
+    <rect x="200" y="445" width="164" height="65" rx="7" fill="#f8fbff" stroke="#72a9ff" stroke-dasharray="4 3"/>
+    <text x="210" y="464" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#35649a">Месяц (04-06-2026 21:13:37)</text>
+    <text x="210" y="481" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700" fill="#00111f">41.945 kWh</text>
+    <text x="210" y="498" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#b06b00">351.92 ₽</text>
+
+    <rect x="385" y="445" width="164" height="65" rx="7" fill="#f8fbff" stroke="#72a9ff" stroke-dasharray="4 3"/>
+    <text x="395" y="464" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#35649a">Месяц (04-06-2026 21:13:37)</text>
+    <text x="395" y="481" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700" fill="#00111f">16.836 kWh</text>
+    <text x="395" y="498" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#b06b00">75.59 ₽</text>
+  </g>
+
+  <g id="meter2">
+    <rect x="33" y="545" width="724" height="110" rx="7" fill="#fffdf8" stroke="#f1bd65"/>
+    <text x="43" y="565" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#a36900">Счетчик 2</text>
+
+    <rect x="215" y="574" width="149" height="61" rx="7" fill="#fff8eb" stroke="#f2b544"/>
+    <text x="225" y="594" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#9b6100">Алексеевская, 17 (день)</text>
+    <text x="225" y="615" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700" fill="#00111f">7 930.675 kWh</text>
+
+    <rect x="400" y="574" width="148" height="61" rx="7" fill="#fff8eb" stroke="#f2b544"/>
+    <text x="410" y="594" font-family="Segoe UI, Arial, sans-serif" font-size="12" fill="#9b6100">Алексеевская, 17 (ночь)</text>
+    <text x="410" y="615" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700" fill="#00111f">3 892.171 kWh</text>
+
+    <rect x="610" y="574" width="122" height="61" rx="7" fill="#eef6ff" stroke="#6aa2ff"/>
+    <text x="620" y="594" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#155bb0">ИТОГО</text>
+    <text x="620" y="615" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700" fill="#00111f">11 822.846 kWh</text>
+  </g>
+</svg>

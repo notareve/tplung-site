@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="TPlung Live: браузерный Web Serial мониторинг BLE advertising пакетов, тренды, локальный архив и CSV экспорт." />
+  <title>TPlung Live</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="backdrop"></div>
+  <header class="site-header">
+    <a class="brand" href="./index.html" aria-label="TPlung Sensor Gateway">
+      <span class="brand-mark">TP</span>
+      <span>TPlung</span>
+    </a>
+
+    <nav class="site-nav" aria-label="Основная навигация">
+      <a href="./index.html#features">Возможности</a>
+      <a href="./index.html#telemetry">Телеметрия</a>
+      <a href="./index.html#interfaces">Интерфейсы</a>
+      <a class="nav-action" href="./firmware.html">Настройка по USB</a>
+      <a class="nav-action nav-live" href="./live.html" aria-current="page">Live</a>
+    </nav>
+  </header>
+
+  <main class="app live-shell">
+    <header class="toolbar live-toolbar">
+      <div class="title-wrap">
+        <p class="eyebrow">Web Serial dashboard</p>
+        <h1>TPlung Live</h1>
+        <p>USB мониторинг BLE advertising пакетов и локальных измерений</p>
+      </div>
+
+      <div class="controls">
+        <button id="connectBtn" class="btn btn-primary">Подключить порт</button>
+        <button id="disconnectBtn" class="btn" disabled>Отключить</button>
+      </div>
+    </header>
+
+    <section class="publish-note" aria-label="Требования и хранение данных">
+      <strong>Перед подключением:</strong>
+      <span>страница должна быть открыта через HTTPS или localhost в Chrome/Edge. Архив трендов хранится только в браузере на этом устройстве: до 2000 точек на устройство; при превышении лимита старые точки удаляются, остаются последние. Для долгого хранения используйте экспорт CSV.</span>
+    </section>
+
+    <section class="panel">
+      <label>
+        Порт
+        <select id="portSelect">
+          <option value="">Нет разрешенных портов, нажмите Добавить порт</option>
+        </select>
+      </label>
+
+      <button id="addPortBtn" class="btn btn-primary">Добавить порт</button>
+      <button id="refreshPortsBtn" class="btn">Обновить порты</button>
+
+      <label>
+        Scan, сек
+        <input id="scanSec" type="number" min="3" max="60" value="10" />
+      </label>
+
+      <label class="inline">
+        <input id="scanPhase" type="checkbox" checked />
+        <span class="hint-label" title="Включает BLE-сканирование: USB-стик принимает advertising пакеты от TPlung устройств в течение заданного времени Scan.">Сканирование</span>
+      </label>
+
+      <label class="inline">
+        <input id="measurePhase" type="checkbox" checked />
+        <span class="hint-label" title="Запускает локальное измерение самого USB-стика: датчики 1-Wire, аналоговые каналы и счетчики, если они включены в настройках.">Измерение</span>
+      </label>
+
+      <button id="scanBtn" class="btn btn-accent run-control" disabled>Выполнить</button>
+
+      <label class="inline">
+        <input id="autoRefresh" type="checkbox" />
+        Автообновление
+      </label>
+
+      <label>
+        Интервал авто, сек
+        <input id="autoSec" type="number" min="5" max="180" value="15" />
+      </label>
+    </section>
+
+    <section class="status">
+      <span id="statusBadge" class="badge badge-off">Не подключено</span>
+      <span id="lastUpdate" class="muted">Обновление: -</span>
+      <span id="logLine" class="muted">Готово</span>
+    </section>
+
+    <section class="live-tools-grid" aria-label="Локальные имена и уведомления">
+      <section class="tool-panel" aria-label="Имена устройств и каналов">
+        <div class="tool-head">
+          <div>
+            <p class="eyebrow">Local labels</p>
+            <h2>Имена</h2>
+          </div>
+          <button id="clearNamesBtn" class="btn" type="button">Сбросить</button>
+        </div>
+
+        <div class="tool-form">
+          <label>
+            Устройство
+            <select id="nameDeviceSelect"></select>
+          </label>
+          <label>
+            Имя устройства
+            <input id="deviceNameInput" type="text" maxlength="40" placeholder="Например: Теплица" />
+          </label>
+          <label>
+            Канал
+            <select id="nameParamSelect"></select>
+          </label>
+          <label>
+            Имя канала
+            <input id="paramNameInput" type="text" maxlength="40" placeholder="Например: Улица" />
+          </label>
+          <button id="saveNamesBtn" class="btn btn-primary" type="button">Сохранить имя</button>
+        </div>
+      </section>
+
+      <section class="tool-panel" aria-label="Пороговые уведомления Live">
+        <div class="tool-head">
+          <div>
+            <p class="eyebrow">Live alerts</p>
+            <h2>Пороги</h2>
+          </div>
+          <span id="alertSummary" class="muted">Правил нет</span>
+        </div>
+
+        <div class="tool-form alert-form">
+          <label>
+            Устройство
+            <select id="alertDeviceSelect"></select>
+          </label>
+          <label>
+            Параметр
+            <select id="alertParamSelect"></select>
+          </label>
+          <label>
+            Min
+            <input id="alertMinInput" type="number" step="0.1" placeholder="-" />
+          </label>
+          <label>
+            Max
+            <input id="alertMaxInput" type="number" step="0.1" placeholder="-" />
+          </label>
+          <label>
+            Нет данных, мин
+            <input id="alertOfflineInput" type="number" min="1" step="1" placeholder="-" />
+          </label>
+          <button id="addAlertRuleBtn" class="btn btn-primary" type="button">Добавить правило</button>
+        </div>
+
+        <div id="alertRulesList" class="rule-list"></div>
+        <div id="alertList" class="alert-list"></div>
+      </section>
+    </section>
+
+    <section id="cards" class="cards"></section>
+
+    <section class="trend-panel" aria-label="Тренды устройств">
+      <div class="trend-head">
+        <div>
+          <p class="eyebrow">Local archive</p>
+          <h2>Тренды</h2>
+        </div>
+        <div class="trend-head-actions">
+          <button id="exportVisibleArchiveBtn" class="btn" type="button">Экспорт видимого CSV</button>
+          <button id="exportArchiveBtn" class="btn" type="button">Экспорт всего CSV</button>
+          <button id="clearArchiveBtn" class="btn" type="button">Очистить архив</button>
+        </div>
+      </div>
+
+      <div class="trend-controls">
+        <label>
+          Устройство
+          <select id="trendDeviceSelect"></select>
+        </label>
+        <div class="trend-param-menu">
+          <span>Параметры</span>
+          <button id="trendParamButton" class="btn" type="button">Нет параметров</button>
+          <div id="trendParamList" class="trend-param-list" hidden></div>
+        </div>
+        <label>
+          Период
+          <select id="trendTimeRange">
+            <option value="all">Весь архив</option>
+            <option value="900000">15 мин</option>
+            <option value="3600000">1 час</option>
+            <option value="21600000">6 часов</option>
+            <option value="86400000">24 часа</option>
+          </select>
+        </label>
+        <span id="trendSummary" class="muted">Архив пуст</span>
+      </div>
+
+      <div id="trendChart" class="trend-chart"></div>
+    </section>
+  </main>
+
+  <template id="cardTemplate">
+    <article class="card">
+      <div class="card-head">
+        <h3 class="dev-title"></h3>
+        <div class="head-chips"></div>
+      </div>
+      <div class="measure-grid"></div>
+      <div class="energy-grid"></div>
+    </article>
+  </template>
+
+  <footer class="site-footer">
+    <span>TPlung Sensor Gateway</span>
+    <a href="mailto:raspi.collector@mail.ru">Вопросы и запрос ПО: raspi.collector@mail.ru</a>
+    <a href="./index.html">Главная</a>
+    <a href="./firmware.html">Настройка по USB</a>
+  </footer>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

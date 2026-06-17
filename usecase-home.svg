@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 300" role="img" aria-labelledby="title desc">
+  <title id="title">Home monitoring use case</title>
+  <desc id="desc">Several TPlung sensors monitor rooms, basement, heating and outdoor temperature.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#142c3d"/>
+      <stop offset="1" stop-color="#0d1822"/>
+    </linearGradient>
+  </defs>
+  <rect width="520" height="300" rx="18" fill="url(#bg)"/>
+  <path d="M78 145 L260 58 L442 145 V235 H78 Z" fill="#132733" stroke="#8ed7df" stroke-width="5"/>
+  <path d="M57 150 L260 42 L463 150" fill="none" stroke="#f2b84b" stroke-width="9" stroke-linecap="round"/>
+  <path d="M258 58 V235 M78 183 H442" stroke="#d8f6f8" stroke-width="3" opacity="0.42"/>
+  <rect x="111" y="161" width="72" height="44" rx="7" fill="#203941" stroke="#7bcff4"/>
+  <rect x="325" y="161" width="72" height="44" rx="7" fill="#203941" stroke="#7bcff4"/>
+  <rect x="219" y="194" width="82" height="41" rx="7" fill="#07101c" stroke="#f2b84b"/>
+  <g fill="#f2b84b">
+    <circle cx="147" cy="183" r="8"/>
+    <circle cx="361" cy="183" r="8"/>
+    <circle cx="260" cy="215" r="8"/>
+  </g>
+  <g stroke="#7bcff4" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.85">
+    <path d="M147 147 C181 118 221 114 254 139"/>
+    <path d="M361 147 C328 118 293 114 263 139"/>
+    <path d="M260 183 C241 162 241 147 260 131"/>
+  </g>
+  <g transform="translate(405 74)">
+    <rect width="62" height="82" rx="12" fill="#07101c" stroke="#7bcff4" stroke-width="3"/>
+    <path d="M19 21 h24 M19 37 h24 M19 53 h17" stroke="#d8f6f8" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="31" cy="68" r="4" fill="#4bd08f"/>
+  </g>
+  <g transform="translate(72 84)" stroke="#ffe09a" stroke-width="4" stroke-linecap="round" fill="none">
+    <path d="M18 0 v43"/>
+    <path d="M10 0 h16"/>
+    <path d="M18 43 c-13 8-5 25 10 21 c15-4 15-20 0-27"/>
+  </g>
+</svg>

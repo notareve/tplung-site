@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 300" role="img" aria-labelledby="title desc">
+  <title id="title">Greenhouse sensor use case</title>
+  <desc id="desc">A TPlung stick collects temperature and humidity sensors and sends BLE data to a phone or USB gateway.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#16324a"/>
+      <stop offset="1" stop-color="#102029"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" x2="1">
+      <stop offset="0" stop-color="#9ee7ef" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#d8f6f8" stop-opacity="0.12"/>
+    </linearGradient>
+  </defs>
+  <rect width="520" height="300" rx="18" fill="url(#sky)"/>
+  <path d="M65 218 L260 82 L455 218 Z" fill="url(#glass)" stroke="#8ed7df" stroke-width="5"/>
+  <path d="M116 218 L260 118 L404 218" fill="none" stroke="#d8f6f8" stroke-width="3" opacity="0.65"/>
+  <path d="M260 82 V218" stroke="#d8f6f8" stroke-width="3" opacity="0.55"/>
+  <rect x="82" y="218" width="356" height="18" rx="9" fill="#0b151d" stroke="#6fb7c4"/>
+  <g fill="#4bd08f">
+    <path d="M140 218 C138 184 154 168 172 156 C174 188 162 207 140 218Z"/>
+    <path d="M181 218 C179 184 195 168 213 156 C215 188 203 207 181 218Z"/>
+    <path d="M344 218 C342 184 358 168 376 156 C378 188 366 207 344 218Z"/>
+  </g>
+  <g transform="translate(225 162)">
+    <rect width="70" height="42" rx="10" fill="#f2b84b"/>
+    <circle cx="18" cy="21" r="7" fill="#102029"/>
+    <path d="M35 15 H56 M35 27 H50" stroke="#102029" stroke-width="5" stroke-linecap="round"/>
+  </g>
+  <g fill="none" stroke="#7bcff4" stroke-width="4" stroke-linecap="round" opacity="0.85">
+    <path d="M305 160 C342 135 374 135 410 158"/>
+    <path d="M318 178 C345 160 370 160 396 178"/>
+  </g>
+  <g transform="translate(405 118)">
+    <rect width="54" height="82" rx="10" fill="#07101c" stroke="#7bcff4" stroke-width="3"/>
+    <rect x="10" y="13" width="34" height="46" rx="5" fill="#132d3c"/>
+    <circle cx="27" cy="70" r="4" fill="#7bcff4"/>
+  </g>
+  <g stroke="#ffe09a" stroke-width="4" stroke-linecap="round">
+    <path d="M110 166 v37"/>
+    <path d="M103 166 h14"/>
+    <path d="M110 203 c-12 8-5 22 8 19 c13-3 14-18 1-24" fill="none"/>
+    <path d="M125 173 c9 7 16 18 16 30 c0 10-7 18-16 18 c-9 0-16-8-16-18 c0-12 7-23 16-30Z" fill="none"/>
+  </g>
+</svg>

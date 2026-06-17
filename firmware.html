@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Настройка TPlung по USB через Web Serial и AT-команды в браузере." />
+  <title>Настройка TPlung по USB</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="backdrop"></div>
+  <header class="site-header">
+    <a class="brand" href="./index.html" aria-label="TPlung Sensor Gateway">
+      <span class="brand-mark">TP</span>
+      <span>TPlung</span>
+    </a>
+
+    <nav class="site-nav" aria-label="Основная навигация">
+      <a href="./index.html">Главная</a>
+      <a href="./index.html#connection">Подключение</a>
+      <a href="./index.html#features">Возможности</a>
+      <a href="./keenetic.html">Keenetic</a>
+      <a class="nav-action" href="./firmware.html" aria-current="page">Настройка по USB</a>
+      <a class="nav-action nav-live" href="./live.html">Live</a>
+    </nav>
+  </header>
+
+  <main class="app live-shell firmware-shell">
+    <header class="toolbar live-toolbar">
+      <div class="title-wrap">
+        <h1>Настройка TPlung по USB</h1>
+      </div>
+
+      <div class="controls">
+        <button id="connectBtn" class="btn btn-primary">Подключить порт</button>
+        <button id="disconnectBtn" class="btn" disabled>Отключить</button>
+      </div>
+    </header>
+
+    <section class="publish-note" aria-label="Требования Web Serial">
+      <strong>Для работы с USB:</strong>
+      <span>откройте страницу через HTTPS или localhost в Chrome/Edge и разрешите доступ к serial-порту только для подключенного TPlung.</span>
+    </section>
+
+    <section class="status">
+      <span id="statusBadge" class="badge badge-off">Не подключено</span>
+      <span id="firmwareVersion" class="badge badge-info">FW --</span>
+      <span id="logLine" class="muted">Готово</span>
+    </section>
+
+    <section class="panel firmware-port-panel">
+      <label>
+        Порт
+        <select id="portSelect">
+          <option value="">Нет разрешенных портов, нажмите Добавить порт</option>
+        </select>
+      </label>
+      <button id="addPortBtn" class="btn btn-primary">Добавить порт</button>
+      <button id="refreshPortsBtn" class="btn">Обновить порты</button>
+    </section>
+
+    <section class="settings-workbench" aria-label="Настройки устройства">
+      <div class="settings-tabs" role="tablist" aria-label="Разделы настроек">
+        <button class="settings-tab active" type="button" role="tab" aria-selected="true" data-settings-tab="general">General</button>
+        <button class="settings-tab" type="button" role="tab" aria-selected="false" data-settings-tab="w1">1-Wire</button>
+        <button class="settings-tab" type="button" role="tab" aria-selected="false" data-settings-tab="analog">Analog</button>
+        <button class="settings-tab" type="button" role="tab" aria-selected="false" data-settings-tab="energo">Energomera</button>
+      </div>
+
+      <div class="settings-actions">
+        <button class="btn btn-primary" id="readSettingsBtn" type="button" disabled>Прочитать настройки</button>
+        <button class="btn btn-accent" id="writeSettingsBtn" type="button" disabled>Записать настройки</button>
+      </div>
+
+      <section class="settings-screen active" data-settings-screen="general" role="tabpanel">
+        <div class="settings-section-head">
+          <h2>General settings</h2>
+        </div>
+        <div class="settings-form">
+          <div class="setting-row"><span>Sync RTC</span><button class="btn" type="button" name="currentTime" value="sync">Синхронизировать</button></div>
+          <fieldset class="settings-group">
+            <legend>Measurement</legend>
+            <label class="setting-row switch-row"><span>Periodic Measurement</span><input type="checkbox" name="periodicMeasurement" checked /></label>
+            <label class="setting-row"><span>Meas period (sec)</span><input type="number" name="autoMeasurement" min="5" max="65500" value="60" /></label>
+          </fieldset>
+          <label class="setting-row switch-row"><span>Time Limited</span><input type="checkbox" name="timeLimited" /></label>
+          <label class="setting-row"><span>Time (sec)</span><input type="number" name="timeLimit" min="5" max="65500" value="300" /></label>
+          <label class="setting-row"><span>Adv Min (ms)</span><input type="number" name="advMin" min="20" max="10240" value="100" /></label>
+          <label class="setting-row"><span>Adv Max (ms)</span><input type="number" name="advMax" min="20" max="16000" value="1000" /></label>
+          <label class="setting-row"><span>TX power</span><select name="txPower"><option>-20 dbm</option><option>-15 dbm</option><option>-10 dbm</option><option>-8 dbm</option><option>-5 dbm</option><option>-3 dbm</option><option>-1 dbm</option><option selected>0 dbm</option><option>1 dbm</option><option>2 dbm</option><option>3 dbm</option><option>4 dbm</option></select></label>
+          <label class="setting-row"><span>Advert type</span><select name="advertType"><option>Kompius beacon</option><option>HomeAssistant v2 beacon</option></select></label>
+          <label class="setting-row"><span>Pass Key</span><input type="password" name="passKey" inputmode="numeric" maxlength="6" value="000000" /></label>
+        </div>
+      </section>
+
+      <section class="settings-screen" data-settings-screen="w1" role="tabpanel" hidden>
+        <div class="settings-section-head">
+          <h2>1-Wire settings</h2>
+        </div>
+        <div class="settings-form">
+          <label class="setting-row switch-row"><span>W1 Therm</span><input type="checkbox" name="w1Therm" checked /></label>
+          <label class="setting-row switch-row"><span>W1 Therm ADV data</span><input type="checkbox" name="w1ThermAdv" checked /></label>
+          <label class="setting-row switch-row"><span>W1Therm Signal</span><input type="checkbox" name="w1ThermSignal" /></label>
+          <label class="setting-row"><span>Tmax, C</span><input type="number" name="w1ThermTmax" min="-100" max="100" step="0.01" value="80.00" /></label>
+          <label class="setting-row"><span>T condition</span><select name="w1ThermCondition"><option>T0 &gt; Tmax</option><option>T1 &gt; Tmax</option><option>T2 &gt; Tmax</option><option>T3 &gt; Tmax</option><option>T4 &gt; Tmax</option><option>T5 &gt; Tmax</option><option>T6 &gt; Tmax</option><option>T7 &gt; Tmax</option><option>some T &gt; Tmax</option><option>all T &gt; Tmax</option></select></label>
+        </div>
+      </section>
+
+      <section class="settings-screen" data-settings-screen="analog" role="tabpanel" hidden>
+        <div class="settings-section-head">
+          <h2>Analog settings</h2>
+        </div>
+        <div class="settings-form">
+          <fieldset class="settings-group">
+            <legend>Thermistor</legend>
+            <label class="setting-row switch-row"><span>Thermistors</span><input type="checkbox" name="thermistors" /></label>
+            <label class="setting-row"><span>Therm Counts</span><input type="number" name="thermistorsCount" min="1" max="2" value="2" /></label>
+            <label class="setting-row switch-row"><span>Thermistor Signal</span><input type="checkbox" name="thermistorSignal" /></label>
+            <label class="setting-row"><span>Tmin, C</span><input type="number" name="analogTmin" min="-100" max="100" step="0.01" value="0.00" /></label>
+            <label class="setting-row"><span>Tmax, C</span><input type="number" name="analogTmax" min="-100" max="100" step="0.01" value="80.00" /></label>
+            <label class="setting-row"><span>T condition</span><select name="analogTcondition"><option>T0 &gt; Tmax</option><option>T1 &gt; Tmax</option><option>T2 &gt; Tmax</option><option>T3 &gt; Tmax</option><option>some T &gt; Tmax</option><option>all T &gt; Tmax</option></select></label>
+          </fieldset>
+          <fieldset class="settings-group">
+            <legend>HR202</legend>
+            <label class="setting-row switch-row"><span>HR202</span><input type="checkbox" name="hr202" /></label>
+            <label class="setting-row switch-row"><span>HR202 Signal</span><input type="checkbox" name="hr202Signal" /></label>
+            <label class="setting-row"><span>Hmin, %</span><input type="number" name="analogHmin" min="0" max="100" step="0.01" value="20.00" /></label>
+            <label class="setting-row"><span>Hmax, %</span><input type="number" name="analogHmax" min="0" max="100" step="0.01" value="80.00" /></label>
+            <label class="setting-row"><span>H condition</span><select name="analogHcondition"><option>H0 &gt; Hmax</option><option>H1 &gt; Hmax</option><option>H2 &gt; Hmax</option><option>H3 &gt; Hmax</option><option>some H &gt; Hmax</option><option>all H &gt; Hmax</option></select></label>
+          </fieldset>
+          <label class="setting-row switch-row"><span>ASensors ADV data</span><input type="checkbox" name="thermistorAdv" /></label>
+        </div>
+      </section>
+
+      <section class="settings-screen" data-settings-screen="energo" role="tabpanel" hidden>
+        <div class="settings-section-head">
+          <h2>Energomera settings</h2>
+        </div>
+        <div class="settings-form">
+          <fieldset class="settings-group">
+            <legend>Counter 1</legend>
+            <label class="setting-row switch-row"><span>Enable</span><input type="checkbox" name="energoCounter1" /></label>
+            <label class="setting-row"><span>MAC</span><input type="text" name="energoCounter1Mac" inputmode="text" placeholder="00:00:00:00:00:00" /></label>
+            <label class="setting-row"><span>PIN</span><input type="password" name="energoCounter1Pin" inputmode="numeric" maxlength="6" /></label>
+          </fieldset>
+          <fieldset class="settings-group">
+            <legend>Counter 2</legend>
+            <label class="setting-row switch-row"><span>Enable</span><input type="checkbox" name="energoCounter2" /></label>
+            <label class="setting-row"><span>MAC</span><input type="text" name="energoCounter2Mac" inputmode="text" placeholder="00:00:00:00:00:00" /></label>
+            <label class="setting-row"><span>PIN</span><input type="password" name="energoCounter2Pin" inputmode="numeric" maxlength="6" /></label>
+          </fieldset>
+          <label class="setting-row switch-row"><span>Energomera ADV data</span><input type="checkbox" name="energoCounterAdv" /></label>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>TPlung Sensor Gateway</span>
+    <a href="mailto:raspi.collector@mail.ru">Вопросы и запрос ПО: raspi.collector@mail.ru</a>
+    <a href="./index.html">Главная</a>
+    <a href="./index.html#connection">Подключение</a>
+    <a href="./live.html">TPlung Live</a>
+  </footer>
+
+  <script type="module" src="./firmware-config.js"></script>
+</body>
+</html>

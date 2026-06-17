@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Сценарий использования TPlung как USB-донгла для Keenetic: MQTT, e-mail отчеты, BLE сбор данных и эксплуатация." />
+  <title>TPlung - сценарий для роутеров</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="backdrop"></div>
+  <header class="site-header">
+    <a class="brand" href="./index.html" aria-label="TPlung Sensor Gateway">
+      <span class="brand-mark">TP</span>
+      <span>TPlung</span>
+    </a>
+
+    <nav class="site-nav" aria-label="Навигация по странице">
+      <a href="#scenario">Сценарий</a>
+      <a href="#steps">Этапы</a>
+      <a href="#mqtt">MQTT</a>
+      <a href="#email">E-mail отчеты</a>
+      <a href="#mail-control">E-mail управление</a>
+      <a href="#ops">Эксплуатация</a>
+      <a class="nav-action" href="./firmware.html">Настроить TPlung</a>
+      <a class="nav-action nav-live" href="./live.html">Live</a>
+    </nav>
+  </header>
+
+  <main class="site-shell">
+    <section id="scenario" class="section-block">
+      <div class="section-head">
+        <p class="eyebrow">Сценарий для роутеров</p>
+        <h1>TPlung как USB-донгл для роутера Keenetic</h1>
+        <p>
+          В этом сценарии роутер Keenetic работает как центральный узел: USB-донгл TPlung делает локальные
+          измерения на собственных датчиках, собирает телеметрию по BLE от других TPlung устройств,
+          публикует значения в MQTT брокер, отправляет ежедневные отчеты на e-mail и может принимать
+          сервисные команды через почтовый ящик.
+        </p>
+      </div>
+
+      <div class="feature-grid">
+        <article class="feature-card">
+          <span class="feature-icon">L</span>
+          <h3>Локальные измерения</h3>
+          <p>USB-донгл продолжает использовать собственные каналы DS18x20, HR202 и термистор как обычный TPlung датчик.</p>
+        </article>
+        <article class="feature-card">
+          <span class="feature-icon">B</span>
+          <h3>BLE-коллектор</h3>
+          <p>Параллельно донгл принимает advertising от других TPlung устройств и передает их показания в систему роутера.</p>
+        </article>
+        <article class="feature-card">
+          <span class="feature-icon">M</span>
+          <h3>MQTT и отчеты</h3>
+          <p>Роутер публикует локальные и BLE-данные в MQTT брокер, ведет архив и отправляет ежедневную сводку на e-mail.</p>
+        </article>
+        <article class="feature-card">
+          <span class="feature-icon">C</span>
+          <h3>Команды по e-mail</h3>
+          <p>Почтовый обработчик принимает разрешенные письма, выполняет сервисные команды и отправляет результат обратно.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="steps" class="section-block split-section">
+      <div class="section-head">
+        <p class="eyebrow">Пошагово</p>
+        <h2>Быстрый путь запуска</h2>
+        <p>
+          Ниже опорная последовательность для стенда Keenetic + Entware + TPlung.
+          Набор пакетов и скриптов может отличаться в вашей сборке, но логика этапов остается той же.
+        </p>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-step">
+          <span>01</span>
+          <strong>Подготовка Entware</strong>
+          <p>Разверните подготовленный образ (будет доступен для скачивания) на USB-накопитель.</p>
+        </div>
+        <div class="timeline-step">
+          <span>02</span>
+          <strong>Запуск сервисов TPlung</strong>
+          <p>Подключите USB-донгл к роутеру - все готово к работе.</p>
+        </div>
+        <div class="timeline-step">
+          <span>03</span>
+          <strong>Настройка отчета и MQTT</strong>
+          <p>Задайте параметры в конфигурационных файлах на разделенном SMB-шаре.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="mqtt" class="section-block">
+      <div class="section-head">
+        <p class="eyebrow">MQTT брокер</p>
+        <h2>Пример топиков и проверки</h2>
+      </div>
+
+      <div class="interface-grid">
+        <article class="interface-panel">
+          <h3>Сервисные настройки</h3>
+          <p>В конфигурационных топиках удобно хранить e-mail адрес, переключатель отчетов и параметры supervise.</p>
+          <pre class="code-block">Settings/Supervise/mailAddress
+Settings/Supervise/reportToEmail
+Settings/Supervise/reports/...</pre>
+        </article>
+        <article class="interface-panel">
+          <h3>Поток телеметрии</h3>
+          <p>Данные датчиков и энергометрии публикуются в прикладные топики и могут быть связаны с устройствами Home Assistant.</p>
+          <pre class="code-block">Thermo/...
+Energy/...
+Binding/...</pre>
+        </article>
+        <article class="interface-panel">
+          <h3>Проверка из CLI</h3>
+          <p>Для диагностики можно подписаться на дерево топиков и убедиться, что значения обновляются в реальном времени.</p>
+          <pre class="code-block">mosquitto_sub -v -t '#'</pre>
+        </article>
+      </div>
+    </section>
+
+    <section id="email" class="section-block">
+      <div class="section-head">
+        <p class="eyebrow">Ежедневные e-mail отчеты</p>
+        <h2>Что отправляется каждый день</h2>
+        <p>
+          Основной ежедневный сценарий формирует HTML-отчет устройств: датчики, энергометрия,
+          свежесть данных, RSSI, состояние батареи и расчет потребления по тарифам, если они заданы в конфигурации.
+        </p>
+      </div>
+
+      <div class="feature-grid">
+        <article class="feature-card">
+          <span class="feature-icon">S</span>
+          <h3>HTML-отчет устройств</h3>
+          <p>Карточки датчиков с именем/MAC, временем последнего значения, RSSI, состоянием батареи, температурой и влажностью.</p>
+        </article>
+        <article class="feature-card">
+          <span class="feature-icon">B</span>
+          <h3>Батарея и статусы</h3>
+          <p>Параметр batt_status попадает в отчет как отдельный бейдж, а уведомления могут приходить с состоянием OK или FAILURE.</p>
+        </article>
+        <article class="feature-card">
+          <span class="feature-icon">E</span>
+          <h3>Энергия и тарифы</h3>
+          <p>Показания энергометрии, суммы по парным каналам, прирост за день/месяц и стоимость в рублях при настроенном tarif.cfg.</p>
+        </article>
+      </div>
+
+      <article class="interface-panel report-panel">
+        <h3>Пример HTML в теле письма</h3>
+        <p>Ниже упрощенный пример фрагмента отчета, который может отправляться прямо в body письма без вложений.</p>
+        <figure class="report-preview">
+          <img src="./report-email-real.svg" alt="Пример ежедневного HTML-отчета TPlung в теле письма" loading="lazy" />
+        </figure>
+      </article>
+    </section>
+
+    <section id="mail-control" class="section-block">
+      <div class="section-head">
+        <p class="eyebrow">E-mail управление</p>
+        <h2>Команды через почтовый ящик</h2>
+      </div>
+
+      <div class="interface-grid mail-control-grid">
+        <article class="interface-panel">
+          <h3>IMAP-слушатель</h3>
+          <p>Роутер проверяет входящую почту, забирает свежие команды и не требует внешнего входящего подключения к объекту.</p>
+          <pre class="code-block">imapfilter
+mailbox: hostname</pre>
+        </article>
+        <article class="interface-panel">
+          <h3>Фильтр входящих писем</h3>
+          <p>Обрабатываются только свежие письма от адресов из allow-list; остальные отправители и темы игнорируются.</p>
+          <pre class="code-block">From: allowed@example.com
+Subject: command</pre>
+        </article>
+        <article class="interface-panel">
+          <h3>Выполнение команд</h3>
+          <p>В text/plain части письма передается Perl-хеш: список команд run и, при необходимости, список файлов get.</p>
+          <pre class="code-block">{
+  run =&gt; ['date', '/opt/usr/local/bin/report_total.pm'],
+  get =&gt; ['/opt/usr/local/data/settings.conf']
+};</pre>
+        </article>
+        <article class="interface-panel">
+          <h3>Ответ и файлы</h3>
+          <p>Результат выполнения приходит обратным письмом; запрошенные файлы упаковываются в 7z-архив и прикладываются к ответу.</p>
+          <pre class="code-block">Subject: results: command
+Attachment: 7z_data.7z</pre>
+        </article>
+      </div>
+    </section>
+
+    <section id="ops" class="section-block">
+      <div class="section-head">
+        <p class="eyebrow">Эксплуатация</p>
+        <h2>Надежная работа каждый день</h2>
+      </div>
+
+      <div class="interface-grid">
+        <article class="interface-panel">
+          <h3>Резерв конфигурации</h3>
+          <p>Храните копии `tarif.cfg`, `mac2name.cfg` и пользовательских скриптов, чтобы быстро восстановить систему после замены носителя.</p>
+        </article>
+        <article class="interface-panel">
+          <h3>Контроль доставки</h3>
+          <p>Добавьте контрольный MQTT heartbeat, проверку отправки e-mail и правила OK/FAILURE для батареи, температуры и напряжения.</p>
+        </article>
+        <article class="interface-panel">
+          <h3>Разделение ролей</h3>
+          <p>Оставьте MQTT для онлайн-автоматизации, а e-mail отчеты для ежедневной аналитики и журнала состояния объекта.</p>
+        </article>
+      </div>
+
+      <div class="hero-actions">
+        <a class="btn" href="./index.html#keenetic">Краткая версия на главной</a>
+        <a class="btn btn-primary" href="./live.html">Открыть TPlung Live</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>TPlung Sensor Gateway</span>
+    <a href="mailto:raspi.collector@mail.ru">Вопросы и запрос ПО: raspi.collector@mail.ru</a>
+    <a href="./index.html">Главная</a>
+    <a href="./live.html">TPlung Live</a>
+  </footer>
+</body>
+</html>

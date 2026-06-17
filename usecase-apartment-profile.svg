@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 300" role="img" aria-labelledby="title desc">
+  <title id="title">Apartment multi-point temperature profile</title>
+  <desc id="desc">Five DS18x20 sensors on one cable measure floor, room, head height, window and radiator temperature points.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#152d42"/>
+      <stop offset="1" stop-color="#0b1720"/>
+    </linearGradient>
+    <linearGradient id="wall" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#183447"/>
+      <stop offset="1" stop-color="#10222d"/>
+    </linearGradient>
+  </defs>
+  <rect width="620" height="300" rx="18" fill="url(#bg)"/>
+  <rect x="62" y="42" width="396" height="198" rx="14" fill="url(#wall)" stroke="#8ed7df" stroke-width="4"/>
+  <path d="M62 240 H506" stroke="#f2b84b" stroke-width="8" stroke-linecap="round"/>
+  <rect x="324" y="76" width="96" height="112" rx="8" fill="#d8f6f8" fill-opacity="0.18" stroke="#7bcff4" stroke-width="4"/>
+  <path d="M372 78 V188 M326 132 H418" stroke="#d8f6f8" stroke-width="3" opacity="0.55"/>
+  <rect x="96" y="185" width="86" height="38" rx="7" fill="#201b10" stroke="#f2b84b" stroke-width="3"/>
+  <path d="M108 197 H170 M108 211 H162" stroke="#ffe09a" stroke-width="5" stroke-linecap="round"/>
+  <rect x="232" y="68" width="72" height="26" rx="8" fill="#07101c" stroke="#7bcff4" stroke-width="3"/>
+  <text x="268" y="87" fill="#d8f6f8" font-family="Consolas, monospace" font-size="15" text-anchor="middle">TPlung</text>
+  <path d="M268 94 C268 120 232 133 232 158 C232 183 267 190 267 214" fill="none" stroke="#4bd08f" stroke-width="5" stroke-linecap="round"/>
+  <path d="M268 94 C315 101 352 115 372 132" fill="none" stroke="#4bd08f" stroke-width="5" stroke-linecap="round"/>
+  <path d="M268 94 C232 103 162 119 139 185" fill="none" stroke="#4bd08f" stroke-width="5" stroke-linecap="round"/>
+  <g font-family="Inter, Arial, sans-serif" font-size="14" fill="#d8f6f8">
+    <g transform="translate(247 216)">
+      <circle cx="20" cy="0" r="10" fill="#f2b84b"/>
+      <text x="38" y="5">T0 пол</text>
+    </g>
+    <g transform="translate(206 157)">
+      <circle cx="20" cy="0" r="10" fill="#f2b84b"/>
+      <text x="38" y="5">T1 рабочая зона</text>
+    </g>
+    <g transform="translate(232 111)">
+      <circle cx="20" cy="0" r="10" fill="#f2b84b"/>
+      <text x="38" y="5">T2 уровень головы</text>
+    </g>
+    <g transform="translate(352 132)">
+      <circle cx="20" cy="0" r="10" fill="#f2b84b"/>
+      <text x="38" y="5">T3 окно</text>
+    </g>
+    <g transform="translate(119 185)">
+      <circle cx="20" cy="0" r="10" fill="#f2b84b"/>
+      <text x="38" y="-12">T4 батарея</text>
+    </g>
+  </g>
+  <g transform="translate(492 66)">
+    <rect width="88" height="168" rx="14" fill="#07101c" stroke="#7bcff4" stroke-width="3"/>
+    <path d="M18 128 V88 M38 128 V52 M58 128 V96 M78 128 V36" stroke="#4bd08f" stroke-width="7" stroke-linecap="round"/>
+    <path d="M15 136 H79" stroke="#d8f6f8" stroke-width="3" opacity="0.6"/>
+    <text x="44" y="158" fill="#ffe09a" font-family="Consolas, monospace" font-size="15" text-anchor="middle">Delta</text>
+  </g>
+</svg>
