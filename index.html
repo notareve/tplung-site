@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="TPlung Sensor Gateway: BLE advertising, USB Live мониторинг, настройка по USB и сценарии для Keenetic." />
+  <title>TPlung Sensor Gateway</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="backdrop"></div>
+  <header class="site-header">
+    <a class="brand" href="./index.html" aria-label="TPlung Sensor Gateway">
+      <span class="brand-mark">TP</span>
+      <span>TPlung</span>
+    </a>
+
+    <nav class="site-nav" aria-label="Основная навигация">
+      <a href="#features">Возможности</a>
+      <a href="#use-cases">Сценарии</a>
+      <a href="#connection">Подключение</a>
+      <a href="#telemetry">Телеметрия</a>
+      <a href="#keenetic">Keenetic</a>
+      <a href="#interfaces">Интерфейсы</a>
+      <a class="nav-action" href="./firmware.html">Настроить TPlung</a>
+      <a class="nav-action nav-live" href="./live.html">Live</a>
+    </nav>
+  </header>
+
+  <main class="site-shell">
+    <section class="hero-section">
+      <div class="hero-copy">
+        <p class="eyebrow">Sensor Gateway на CH592 BLE USB stick</p>
+        <h1>TPlung</h1>
+        <p class="hero-lead">
+          TPlung собирает температуру, влажность и показания счетчиков, публикует данные в BLE advertising и дает быстрый USB-доступ для диагностики через браузер.
+        </p>
+
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="./keenetic.html">Сценарий для роутеров</a>
+          <a class="btn" href="#features">Смотреть возможности</a>
+          <a class="btn" href="https://console.rustore.ru/apps/1934742719" target="_blank" rel="noopener noreferrer">Приложение в RuStore</a>
+        </div>
+      </div>
+
+      <div class="tplung-console" aria-label="Сводка возможностей TPlung">
+        <div class="console-head">
+          <span>Стек TPlung</span>
+          <strong>CH592</strong>
+        </div>
+        <div class="console-grid">
+          <div class="console-tile tile-wide">
+            <span>Канал данных</span>
+            <strong>DS18x20 / HR202 / термистор -> BLE ADV -> USB Live</strong>
+          </div>
+          <div class="console-tile">
+            <span>ADV форматы</span>
+            <strong>Kompius / Home Assistant v2</strong>
+          </div>
+          <div class="console-tile">
+            <span>USB Serial AT-команды</span>
+            <strong>atXXXX</strong>
+          </div>
+          <div class="console-tile">
+            <span>Питание</span>
+            <strong>USB / батарейка</strong>
+          </div>
+          <a class="console-tile console-link" href="./live.html">
+            <span>Live страница</span>
+            <strong>Открыть Web Serial</strong>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="overview-grid" aria-label="Ключевые параметры">
+      <div class="overview-tile accent-tile">
+        <strong>8</strong>
+        <span>1-Wire температурных каналов</span>
+      </div>
+      <div class="overview-tile">
+        <strong>HR202</strong>
+        <span>влажность и термисторный канал температуры</span>
+      </div>
+      <div class="overview-tile">
+        <strong>4</strong>
+        <span>T1/T2 с двух счетчиков Энергомера CE308 для Home Assistant</span>
+      </div>
+      <div class="overview-tile">
+        <strong>2</strong>
+        <span>формата BLE advertising</span>
+      </div>
+      <div class="overview-tile">
+        <strong class="nowrap">12&nbsp;Мбит/с</strong>
+        <span>USB Full-Speed, режим CH340</span>
+      </div>
+      <div class="overview-tile accent-tile">
+        <strong>USB / батарейка</strong>
+        <span>автономно до нескольких лет (FANSO 14505 3.6V)</span>
+      </div>
+    </section>
+
+    <section id="use-cases" class="section-block use-case-section">
+      <div class="section-head">
+        <p class="eyebrow">Где применять</p>
+        <h2>Варианты использования TPlung</h2>
+        <p>TPlung удобно ставить там, где датчики должны жить рядом с объектом, а данные нужно получать без отдельного дисплея: через BLE, USB Live, роутер или Home Assistant.</p>
+      </div>
+
+      <div class="use-case-grid">
+        <article class="use-case-card">
+          <figure class="use-case-visual">
+            <img src="./usecase-greenhouse.svg" alt="Схема: датчики температуры и влажности в теплице передают данные через TPlung" loading="lazy" />
+          </figure>
+          <div class="use-case-copy">
+            <h3>Теплица, погреб, котельная</h3>
+            <p>Контроль температуры и влажности в местах, где нужен простой автономный датчик с BLE-передачей и быстрым USB просмотром.</p>
+            <div class="feature-points">
+              <span>HR202</span>
+              <span>DS18x20</span>
+              <span>пороги Live</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="use-case-card">
+          <figure class="use-case-visual">
+            <img src="./usecase-home.svg" alt="Схема: несколько комнат дома контролируются датчиками TPlung" loading="lazy" />
+          </figure>
+          <div class="use-case-copy">
+            <h3>Домовой мониторинг</h3>
+            <p>Несколько каналов температуры для комнат, улицы, отопления и технических зон с локальными именами устройств и каналов.</p>
+            <div class="feature-points">
+              <span>до 8 каналов</span>
+              <span>имена датчиков</span>
+              <span>тренды</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="use-case-card">
+          <figure class="use-case-visual">
+            <img src="./usecase-energy.svg" alt="Схема: два счетчика Энергомера CE308 передают тарифы T1 и T2 в отчеты" loading="lazy" />
+          </figure>
+          <div class="use-case-copy">
+            <h3>Учет электроэнергии</h3>
+            <p>Съем T1/T2 с двух счетчиков Энергомера CE308, передача показаний в BLE advertising, MQTT и ежедневные отчеты.</p>
+            <div class="feature-points">
+              <span>2 счетчика</span>
+              <span>T1/T2</span>
+              <span>CSV/отчеты</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="use-case-card">
+          <figure class="use-case-visual">
+            <img src="./usecase-gateway.svg" alt="Схема: USB-донгл TPlung передает BLE телеметрию через роутер в MQTT и Home Assistant" loading="lazy" />
+          </figure>
+          <div class="use-case-copy">
+            <h3>USB-шлюз для роутера или сервера</h3>
+            <p>USB-донгл принимает BLE payload, роутер или мини-сервер публикует данные в MQTT и передает их в Home Assistant.</p>
+            <div class="feature-points">
+              <span>USB Live</span>
+              <span>MQTT</span>
+              <span>Home Assistant</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="use-case-card use-case-card-wide use-case-idea">
+          <figure class="use-case-visual">
+            <img src="./usecase-apartment-profile.svg" alt="Схема: пять DS18x20 на одном шлейфе измеряют пол, комнату, уровень головы, окно и батарею" loading="lazy" />
+          </figure>
+          <div class="use-case-copy">
+            <p class="eyebrow">Для эстетов теплового комфорта</p>
+            <h3>Температурный профиль квартиры</h3>
+            <p>Один 1-Wire шлейф с 4-5 DS18x20 превращает TPlung в диагностический профиль комнаты: видно холодный пол, перегрев под потолком, продувание окна и работу батареи отопления по разнице между точками. Для тех, кому "в комнате 23 C" уже недостаточно.</p>
+            <div class="use-case-metrics" aria-label="Полезные расчетные разницы температур">
+              <span>пол-потолок</span>
+              <span>окно-комната</span>
+              <span>батарея-комната</span>
+              <span>остывание при проветривании</span>
+            </div>
+            <div class="feature-points">
+              <span>T0 пол</span>
+              <span>T1 рабочая зона</span>
+              <span>T2 уровень головы</span>
+              <span>T3 окно</span>
+              <span>T4 батарея</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="features" class="section-block">
+      <div class="section-head">
+        <p class="eyebrow">Что умеет TPlung</p>
+        <h2>Функциональные возможности</h2>
+      </div>
+
+      <div class="feature-grid">
+        <article class="feature-card">
+          <span class="feature-icon">T</span>
+          <h3>Температура DS18x20</h3>
+          <p>Поддержка до восьми 1-Wire датчиков ds18s20 (паразитное питание), автозамер по периоду, публикация выбранных каналов и сохранение привязки адресов.</p>
+          <div class="feature-points">
+            <span>1-Wire</span>
+            <span>до 8 каналов</span>
+            <span>ADV flags</span>
+          </div>
+        </article>
+
+        <article class="feature-card">
+          <span class="feature-icon">H</span>
+          <h3>HR202 и термистор</h3>
+          <p>HR202 снимает влажность, термистор дает температурный канал, а пороги с задержками позволяют формировать сигнальные состояния.</p>
+          <div class="feature-points">
+            <span>HR202</span>
+            <span>термистор</span>
+            <span>пороги</span>
+          </div>
+        </article>
+
+        <article class="feature-card">
+          <span class="feature-icon">E</span>
+          <h3>Счетчики Энергомера CE308</h3>
+          <p>Съем показаний с двух счетчиков Энергомера CE308: тарифные зоны T1/T2 передаются в advertising для мгновенного доступа из Home Assistant, а в USB-сценарии результаты чтения отдаются строкой JSON.</p>
+          <div class="feature-points">
+            <span>2 счетчика</span>
+            <span>T1/T2</span>
+            <span>JSON over USB</span>
+            <span>Home Assistant</span>
+          </div>
+        </article>
+
+        <article class="feature-card">
+          <span class="feature-icon">B</span>
+          <h3>BLE advertising</h3>
+          <p>Два рабочих формата: Kompius и Home Assistant v2, настройка интервалов AdvMin/AdvMax и мощности TX.</p>
+          <div class="feature-points">
+            <span>Kompius</span>
+            <span>Home Assistant v2</span>
+            <span>TX power</span>
+          </div>
+        </article>
+
+        <article class="feature-card">
+          <span class="feature-icon">U</span>
+          <h3>USB диагностика</h3>
+          <p>USB в режиме CH340 передает сырые BLE пакеты TPlung и принимает команды сканирования для Web Serial панели.</p>
+          <div class="feature-points">
+            <span>USB bulk</span>
+            <span>Web Serial</span>
+            <span>live scan</span>
+          </div>
+        </article>
+
+        <article class="feature-card">
+          <span class="feature-icon">P</span>
+          <h3>Энергосбережение</h3>
+          <p>Автоизмерения, time limited режимы, long sleep профили и отключение USB-линий при отсутствии хоста рассчитаны на питание от USB или батарейки до нескольких лет (Li-SOCl2 FANSO 14505 3.6V).</p>
+          <div class="feature-points">
+            <span>long sleep</span>
+            <span>FANSO 14505</span>
+            <span>time limit</span>
+            <span>USB off</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="connection" class="section-block connection-section">
+      <div class="section-head">
+        <p class="eyebrow">Подключение и настройка</p>
+        <h2>Схема датчиков и USB-конфигурация донгла</h2>
+        <p>
+          На этой странице собрана базовая схема подключения 1-Wire, HR202 и термисторного канала,
+          а также сценарий настройки TPlung через USB без дополнительного программатора.
+        </p>
+      </div>
+
+      <div class="connection-layout">
+        <figure class="connection-diagram">
+          <img src="./connections.png" alt="Схема подключения датчиков к TPlung: A4-A15, 1-Wire, HR202 и термистор" loading="lazy" />
+        </figure>
+
+        <div class="connection-panels">
+          <article class="interface-panel">
+            <h3>1-Wire DS18x20</h3>
+            <p>Линия W1 подключается к входу w1, общий провод - к w1 gnd. Для 1-Wire предусмотрен подтягивающий резистор 10k.</p>
+          </article>
+          <article class="interface-panel">
+            <h3>HR202 и термистор</h3>
+            <p>Каналы h0/t1 и t0 используются для влажности HR202 и температурного термисторного входа.</p>
+          </article>
+          <article class="interface-panel">
+            <h3>Перемычка A4-A15</h3>
+            <p>A4 соединяется с A15, а резистор 10k ставится между линией A4/A15 и A5 (GND).</p>
+          </article>
+          <article class="interface-panel accent-panel">
+            <h3>Настройка через USB</h3>
+            <p>Настройки firmware либо через BLE-характеристику, либо через USB.</p>
+            <div class="hero-actions compact-actions">
+              <a class="btn btn-primary" href="./firmware.html">Настроить TPlung по USB</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="telemetry" class="section-block split-section">
+      <div class="section-head">
+        <p class="eyebrow">Поток данных</p>
+        <h2>Измерения превращаются в понятную телеметрию</h2>
+        <p>TPlung упаковывает значения в BLE payload: RSSI, батарея, время пакета, температура, влажность и показания счетчиков Энергомера CE308 доступны внешним коллекторам и браузерному Live-экрану.</p>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-step">
+          <span>01</span>
+          <strong>Измерение</strong>
+          <p>DS18x20, HR202/термистор и Энергомера CE308 обновляют внутренние структуры данных.</p>
+        </div>
+        <div class="timeline-step">
+          <span>02</span>
+          <strong>Упаковка</strong>
+          <p>Флаги присутствия позволяют передавать только активные каналы и укладываться в BLE advertising.</p>
+        </div>
+        <div class="timeline-step">
+          <span>03</span>
+          <strong>Публикация</strong>
+          <p>Kompius и Home Assistant v2 форматы отдают данные в advert/scan response, USB канал помогает видеть то же самое live.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="keenetic" class="section-block">
+      <div class="section-head">
+        <p class="eyebrow">Сценарий для роутеров</p>
+        <h2>TPlung как USB-донгл для Keenetic/Entware/RPi/OPi</h2>
+        <p>
+          TPlung можно использовать как донгл для Wi-Fi роутеров Keenetic: роутер получает поток телеметрии,
+          публикует значения в MQTT брокер и отправляет ежедневные отчеты на e-mail.
+        </p>
+      </div>
+
+      <div class="interface-grid">
+        <article class="interface-panel">
+          <h3>Ежедневные отчеты на почту</h3>
+          <p>На стороне Keenetic запускаются скрипты отчетности по расписанию (cron): формируются сводки и графики, которые отправляются на заданный e-mail адрес один раз в сутки.</p>
+        </article>
+        <article class="interface-panel">
+          <h3>Публикация в MQTT брокер</h3>
+          <p>Данные TPlung прокидываются в MQTT топики роутера и доступны локальному/внешнему брокеру для Home Assistant, Node-RED и других систем автоматизации.</p>
+        </article>
+        <article class="interface-panel">
+          <h3>Что еще дает связка</h3>
+          <p>Локальный архив измерений на USB-накопителе, автоматический старт после перезагрузки роутера и удаленная настройка параметров через MQTT топики supervise или через файлы конфигурации на разделенном ресурсе SMB.</p>
+        </article>
+      </div>
+
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="./keenetic.html">Сценарий для роутеров</a>
+      </div>
+    </section>
+
+    <section id="interfaces" class="section-block">
+      <div class="section-head">
+        <p class="eyebrow">Интеграции</p>
+        <h2>Интерфейсы TPlung</h2>
+      </div>
+
+      <div class="interface-grid">
+        <article class="interface-panel">
+          <h3>Kompius ADV</h3>
+          <p>Собственный manufacturer payload с RTC, блоками HR202, DS18x20 и отдельным scan response для Энергомера CE308.</p>
+        </article>
+        <article class="interface-panel">
+          <h3>Home Assistant v2</h3>
+          <p>BLE service data UUID 0x181A с temperature, humidity, voltage, battery и energy значениями.</p>
+        </article>
+        <article class="interface-panel">
+          <h3>TPlung Live</h3>
+          <p>Отдельная Web Serial страница управляет TPlung через AT-команды (atXXXX) и показывает найденные устройства карточками.</p>
+        </article>
+        <article class="interface-panel">
+          <h3>Настроить TPlung</h3>
+          <p>Отдельная страница для настройки firmware через USB, карта групп настроек.</p>
+        </article>
+        <article class="interface-panel">
+          <h3>Приложение RuStore</h3>
+          <p>Мобильное приложение TPlung доступно в RuStore: <a href="https://www.rustore.ru/catalog/app/ru.kompius.thermo_plung" target="_blank" rel="noopener noreferrer">страница приложения</a>.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>TPlung Sensor Gateway</span>
+    <a href="mailto:raspi.collector@mail.ru">Вопросы и запрос ПО: raspi.collector@mail.ru</a>
+    <a href="./keenetic.html">Сценарий для роутеров</a>
+    <a href="./firmware.html">Настроить TPlung</a>
+    <a href="./live.html">TPlung Live</a>
+  </footer>
+</body>
+</html>
