@@ -2,7 +2,7 @@
 
 Статический сайт о функциональных возможностях TPlung и отдельная браузерная Live-панель.
 
-Приложение TPlung в RuStore: https://console.rustore.ru/apps/1934742719
+Приложение TPlung в RuStore: https://www.rustore.ru/catalog/app/ru.kompius.thermo_plung
 
 Контакты для вопросов и запросов ПО: raspi.collector@mail.ru
 
