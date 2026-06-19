@@ -22,6 +22,7 @@
       <a href="#connection">Подключение</a>
       <a href="#telemetry">Телеметрия</a>
       <a href="#keenetic">Keenetic</a>
+      <a href="#photos">Фото</a>
       <a href="#interfaces">Интерфейсы</a>
       <a class="nav-action" href="./firmware.html">Настроить TPlung</a>
       <a class="nav-action nav-live" href="./live.html">Live</a>
@@ -33,6 +34,24 @@
       <div class="hero-copy">
         <p class="eyebrow">Sensor Gateway на CH592 BLE USB stick</p>
         <h1>TPlung</h1>
+
+        <section id="photos" class="photo-carousel is-portrait" aria-label="Фотографии устройства TPlung">
+          <figure class="product-photo carousel-stage">
+            <button class="carousel-zoom-button" type="button" id="photoZoomBtn" aria-label="Увеличить фото">
+              <img id="photoCarouselImage" src="./assets/photos/photo_2026-06-19_22-47-36.jpg" alt="Корпус с кабелем" />
+            </button>
+          </figure>
+          <div class="carousel-controls">
+            <b id="photoCarouselPrice">1500 ₽ без НДС</b>
+            <button class="carousel-btn" type="button" id="photoPrevBtn" aria-label="Предыдущее фото">‹</button>
+            <div class="carousel-meta">
+              <span id="photoCarouselCounter">1 / 8</span>
+              <strong id="photoCarouselCaption">Корпус с кабелем</strong>
+            </div>
+            <button class="carousel-btn" type="button" id="photoNextBtn" aria-label="Следующее фото">›</button>
+          </div>
+        </section>
+
         <p class="hero-lead">
           TPlung собирает температуру, влажность и показания счетчиков, публикует данные в BLE advertising и дает быстрый USB-доступ для диагностики через браузер.
         </p>
@@ -44,32 +63,34 @@
         </div>
       </div>
 
-      <div class="tplung-console" aria-label="Сводка возможностей TPlung">
-        <div class="console-head">
-          <span>Стек TPlung</span>
-          <strong>CH592</strong>
-        </div>
-        <div class="console-grid">
-          <div class="console-tile tile-wide">
-            <span>Канал данных</span>
-            <strong>DS18x20 / HR202 / термистор -> BLE ADV -> USB Live</strong>
+      <div class="hero-aside">
+        <div class="tplung-console" aria-label="Сводка возможностей TPlung">
+          <div class="console-head">
+            <span>Стек TPlung</span>
+            <strong>CH592</strong>
           </div>
-          <div class="console-tile">
-            <span>ADV форматы</span>
-            <strong>Kompius / Home Assistant v2</strong>
+          <div class="console-grid">
+            <div class="console-tile tile-wide">
+              <span>Канал данных</span>
+              <strong>DS18x20 / HR202 / термистор -> BLE ADV -> USB Live</strong>
+            </div>
+            <div class="console-tile">
+              <span>ADV форматы</span>
+              <strong>Kompius / Home Assistant v2</strong>
+            </div>
+            <div class="console-tile">
+              <span>USB Serial AT-команды</span>
+              <strong>atXXXX</strong>
+            </div>
+            <div class="console-tile">
+              <span>Питание</span>
+              <strong>USB / батарейка</strong>
+            </div>
+            <a class="console-tile console-link" href="./live.html">
+              <span>Live страница</span>
+              <strong>Открыть Web Serial</strong>
+            </a>
           </div>
-          <div class="console-tile">
-            <span>USB Serial AT-команды</span>
-            <strong>atXXXX</strong>
-          </div>
-          <div class="console-tile">
-            <span>Питание</span>
-            <strong>USB / батарейка</strong>
-          </div>
-          <a class="console-tile console-link" href="./live.html">
-            <span>Live страница</span>
-            <strong>Открыть Web Serial</strong>
-          </a>
         </div>
       </div>
     </section>
@@ -405,5 +426,82 @@
     <a href="./firmware.html">Настроить TPlung</a>
     <a href="./live.html">TPlung Live</a>
   </footer>
+
+  <div class="photo-lightbox" id="photoLightbox" aria-hidden="true">
+    <button class="lightbox-backdrop" type="button" id="photoLightboxBackdrop" aria-label="Закрыть фото"></button>
+    <figure class="lightbox-frame">
+      <button class="lightbox-close" type="button" id="photoLightboxClose" aria-label="Закрыть">×</button>
+      <img id="photoLightboxImage" src="./assets/photos/photo_2026-06-19_22-47-36.jpg" alt="Корпус с кабелем" />
+      <figcaption id="photoLightboxCaption">Корпус с кабелем</figcaption>
+    </figure>
+  </div>
+
+  <script>
+    (() => {
+      const photos = [
+        { src: "./assets/photos/photo_2026-06-19_22-47-36.jpg", alt: "Корпус с кабелем", price: "1500 ₽ без НДС", shape: "portrait" },
+        { src: "./assets/photos/photo_2026-06-19_22-47-25.jpg", alt: "Плата с USB", price: "1500 ₽ без НДС", shape: "portrait" },
+        { src: "./assets/photos/photo_2026-06-19_22-47-48.jpg", alt: "Закрытый корпус", price: "1500 ₽ без НДС", shape: "portrait" },
+        { src: "./assets/photos/photo_2026-06-19_22-47-52.jpg", alt: "Плата в корпусе", price: "1500 ₽ без НДС", shape: "landscape" },
+        { src: "./assets/photos/photo_2026-06-19_22-47-56.jpg", alt: "Корпус с гребенкой", price: "1500 ₽ без НДС", shape: "portrait" },
+        { src: "./assets/photos/photo_2026-06-19_22-48-00.jpg", alt: "Вид сбоку", price: "1500 ₽ без НДС", shape: "portrait" },
+        { src: "./assets/photos/photo_2026-06-19_22-48-04.jpg", alt: "Сдвинутая крышка", price: "1500 ₽ без НДС", shape: "portrait" },
+        { src: "./assets/photos/photo_2026-06-19_22-48-08.jpg", alt: "CH592F с прошивкой TPlung", price: "1200 ₽ без НДС", shape: "portrait" }
+      ];
+
+      const carousel = document.getElementById("photos");
+      const image = document.getElementById("photoCarouselImage");
+      const counter = document.getElementById("photoCarouselCounter");
+      const caption = document.getElementById("photoCarouselCaption");
+      const price = document.getElementById("photoCarouselPrice");
+      const prev = document.getElementById("photoPrevBtn");
+      const next = document.getElementById("photoNextBtn");
+      const zoom = document.getElementById("photoZoomBtn");
+      const lightbox = document.getElementById("photoLightbox");
+      const lightboxImage = document.getElementById("photoLightboxImage");
+      const lightboxCaption = document.getElementById("photoLightboxCaption");
+      const lightboxClose = document.getElementById("photoLightboxClose");
+      const lightboxBackdrop = document.getElementById("photoLightboxBackdrop");
+      let index = 0;
+
+      function renderPhoto(nextIndex) {
+        index = (nextIndex + photos.length) % photos.length;
+        const photo = photos[index];
+        image.src = photo.src;
+        image.alt = photo.alt;
+        counter.textContent = `${index + 1} / ${photos.length}`;
+        caption.textContent = photo.alt;
+        price.textContent = photo.price;
+        carousel.classList.toggle("is-landscape", photo.shape === "landscape");
+        carousel.classList.toggle("is-portrait", photo.shape !== "landscape");
+        lightboxImage.src = photo.src;
+        lightboxImage.alt = photo.alt;
+        lightboxCaption.textContent = photo.alt;
+      }
+
+      function openLightbox() {
+        lightbox.classList.add("is-open");
+        lightbox.setAttribute("aria-hidden", "false");
+        lightboxClose.focus();
+      }
+
+      function closeLightbox() {
+        lightbox.classList.remove("is-open");
+        lightbox.setAttribute("aria-hidden", "true");
+        zoom.focus();
+      }
+
+      prev.addEventListener("click", () => renderPhoto(index - 1));
+      next.addEventListener("click", () => renderPhoto(index + 1));
+      zoom.addEventListener("click", openLightbox);
+      lightboxClose.addEventListener("click", closeLightbox);
+      lightboxBackdrop.addEventListener("click", closeLightbox);
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && lightbox.classList.contains("is-open")) {
+          closeLightbox();
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
