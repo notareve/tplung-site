@@ -42,13 +42,26 @@
             </button>
           </figure>
           <div class="carousel-controls">
-            <b id="photoCarouselPrice">1500 ₽</b>
+            <div class="carousel-buy-row">
+              <b id="photoCarouselPrice">1500 ₽</b>
+              <button class="buy-toggle btn btn-primary" type="button" id="buyToggleBtn" aria-expanded="false" aria-controls="buyPanel">Купить</button>
+            </div>
             <button class="carousel-btn" type="button" id="photoPrevBtn" aria-label="Предыдущее фото">‹</button>
             <div class="carousel-meta">
               <span id="photoCarouselCounter">1 / 8</span>
               <strong id="photoCarouselCaption">Корпус с кабелем</strong>
             </div>
             <button class="carousel-btn" type="button" id="photoNextBtn" aria-label="Следующее фото">›</button>
+            <div class="buy-panel" id="buyPanel" hidden>
+              <div class="buy-form-row">
+                <label class="buy-quantity" for="buyQuantity">
+                  <span>Кол-во</span>
+                  <input type="number" id="buyQuantity" min="1" max="99" step="1" value="1" inputmode="numeric" />
+                </label>
+                <output class="buy-total" id="buyTotal">1500 ₽</output>
+              </div>
+              <button class="btn btn-primary buy-pay" type="button" id="sbpPayBtn">Оплатить QR</button>
+            </div>
           </div>
         </section>
 
@@ -436,6 +449,18 @@
     </figure>
   </div>
 
+  <div class="qr-modal" id="sbpQrModal" aria-hidden="true">
+    <button class="qr-modal-backdrop" type="button" id="sbpQrBackdrop" aria-label="Закрыть QR оплаты"></button>
+    <section class="qr-modal-frame" role="dialog" aria-modal="true" aria-labelledby="sbpQrTitle">
+      <button class="qr-modal-close" type="button" id="sbpQrClose" aria-label="Закрыть">×</button>
+      <h2 id="sbpQrTitle">Оплата по QR</h2>
+      <div class="sbp-qr" aria-live="polite">
+        <img id="sbpQrImage" src="" alt="QR-код для оплаты TPlung через СБП" hidden />
+        <p id="sbpQrCaption"></p>
+      </div>
+    </section>
+  </div>
+
   <script>
     (() => {
       const photos = [
@@ -449,11 +474,27 @@
         { src: "./assets/photos/photo_2026-06-19_22-48-08.jpg", alt: "CH592F с прошивкой TPlung", price: "1200 ₽", shape: "portrait" }
       ];
 
+      const sbpConfig = {
+        apiEndpoint: "",
+        paymentLink: "",
+        purposePrefix: "TPlung Sensor Gateway"
+      };
+
       const carousel = document.getElementById("photos");
       const image = document.getElementById("photoCarouselImage");
       const counter = document.getElementById("photoCarouselCounter");
       const caption = document.getElementById("photoCarouselCaption");
       const price = document.getElementById("photoCarouselPrice");
+      const buyToggle = document.getElementById("buyToggleBtn");
+      const buyPanel = document.getElementById("buyPanel");
+      const buyQuantity = document.getElementById("buyQuantity");
+      const buyTotal = document.getElementById("buyTotal");
+      const sbpPay = document.getElementById("sbpPayBtn");
+      const sbpQrModal = document.getElementById("sbpQrModal");
+      const sbpQrClose = document.getElementById("sbpQrClose");
+      const sbpQrBackdrop = document.getElementById("sbpQrBackdrop");
+      const sbpQrImage = document.getElementById("sbpQrImage");
+      const sbpQrCaption = document.getElementById("sbpQrCaption");
       const prev = document.getElementById("photoPrevBtn");
       const next = document.getElementById("photoNextBtn");
       const zoom = document.getElementById("photoZoomBtn");
@@ -463,6 +504,133 @@
       const lightboxClose = document.getElementById("photoLightboxClose");
       const lightboxBackdrop = document.getElementById("photoLightboxBackdrop");
       let index = 0;
+
+      const rubFormatter = new Intl.NumberFormat("ru-RU", {
+        style: "currency",
+        currency: "RUB",
+        maximumFractionDigits: 0
+      });
+
+      function parsePriceValue(value) {
+        return Number(String(value).replace(/[^\d,.-]/g, "").replace(",", ".")) || 0;
+      }
+
+      function getQuantity() {
+        const value = Number.parseInt(buyQuantity.value, 10);
+        return Number.isFinite(value) ? Math.max(1, Math.min(99, value)) : 1;
+      }
+
+      function getCurrentOrder() {
+        const photo = photos[index];
+        const quantity = getQuantity();
+        const unitPrice = parsePriceValue(photo.price);
+        return {
+          photo,
+          quantity,
+          unitPrice,
+          total: unitPrice * quantity
+        };
+      }
+
+      function formatRub(value) {
+        return rubFormatter.format(value).replace(/,00\s?₽$/, " ₽");
+      }
+
+      function updateOrderSummary() {
+        const order = getCurrentOrder();
+        buyQuantity.value = order.quantity;
+        buyTotal.value = formatRub(order.total);
+      }
+
+      function hideSbpQr() {
+        sbpQrModal.classList.remove("is-open");
+        sbpQrModal.setAttribute("aria-hidden", "true");
+        sbpQrImage.hidden = true;
+        sbpQrImage.removeAttribute("src");
+        sbpQrCaption.textContent = "";
+      }
+
+      function openSbpQr() {
+        sbpQrModal.classList.add("is-open");
+        sbpQrModal.setAttribute("aria-hidden", "false");
+        sbpQrClose.focus();
+      }
+
+      function closeSbpQr() {
+        sbpQrModal.classList.remove("is-open");
+        sbpQrModal.setAttribute("aria-hidden", "true");
+        sbpPay.focus();
+      }
+
+      function buildPaymentLink(order) {
+        const purpose = `${sbpConfig.purposePrefix}: ${order.photo.alt}, ${order.quantity} шт.`;
+        const separator = sbpConfig.paymentLink.includes("?") ? "&" : "?";
+        const params = new URLSearchParams({
+          amount: order.total.toFixed(2),
+          purpose,
+          quantity: String(order.quantity),
+          item: order.photo.alt
+        });
+        return `${sbpConfig.paymentLink}${separator}${params.toString()}`;
+      }
+
+      async function requestSberQr(order) {
+        const response = await fetch(sbpConfig.apiEndpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            item: order.photo.alt,
+            quantity: order.quantity,
+            amount: order.total,
+            amountKopecks: Math.round(order.total * 100),
+            purpose: `${sbpConfig.purposePrefix}: ${order.photo.alt}, ${order.quantity} шт.`
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error("Не удалось создать QR оплаты");
+        }
+
+        const payment = await response.json();
+        return payment.order_form_url || payment.orderFormUrl || payment.qrUrl;
+      }
+
+      async function renderSbpQr() {
+        const order = getCurrentOrder();
+        let payload = "";
+
+        try {
+          if (sbpConfig.apiEndpoint) {
+            payload = await requestSberQr(order);
+          } else if (sbpConfig.paymentLink) {
+            payload = buildPaymentLink(order);
+          }
+        } catch (error) {
+          sbpQrImage.hidden = true;
+          sbpQrImage.removeAttribute("src");
+          sbpQrCaption.textContent = "Не удалось создать QR оплаты. Попробуйте позже или свяжитесь с продавцом.";
+          openSbpQr();
+          return;
+        }
+
+        if (!payload) {
+          sbpQrImage.hidden = true;
+          sbpQrImage.removeAttribute("src");
+          sbpQrCaption.textContent = "Оплата по СБП пока не подключена - запросите счет по почте ivk16@mail.ru";
+          openSbpQr();
+          return;
+        }
+
+        const qrUrl = new URL("https://api.qrserver.com/v1/create-qr-code/");
+        qrUrl.searchParams.set("size", "240x240");
+        qrUrl.searchParams.set("data", payload);
+        sbpQrImage.hidden = false;
+        sbpQrImage.src = qrUrl.toString();
+        sbpQrCaption.textContent = `${order.photo.alt}: ${order.quantity} шт., ${formatRub(order.total)}`;
+        openSbpQr();
+      }
 
       function renderPhoto(nextIndex) {
         index = (nextIndex + photos.length) % photos.length;
@@ -477,6 +645,8 @@
         lightboxImage.src = photo.src;
         lightboxImage.alt = photo.alt;
         lightboxCaption.textContent = photo.alt;
+        updateOrderSummary();
+        hideSbpQr();
       }
 
       function openLightbox() {
@@ -493,10 +663,32 @@
 
       prev.addEventListener("click", () => renderPhoto(index - 1));
       next.addEventListener("click", () => renderPhoto(index + 1));
+      buyToggle.addEventListener("click", () => {
+        const isOpen = buyPanel.hidden;
+        buyPanel.hidden = !isOpen;
+        buyToggle.setAttribute("aria-expanded", String(isOpen));
+        updateOrderSummary();
+        if (isOpen) {
+          buyQuantity.focus();
+        } else {
+          hideSbpQr();
+        }
+      });
+      buyQuantity.addEventListener("input", () => {
+        updateOrderSummary();
+        hideSbpQr();
+      });
+      sbpPay.addEventListener("click", renderSbpQr);
+      sbpQrClose.addEventListener("click", closeSbpQr);
+      sbpQrBackdrop.addEventListener("click", closeSbpQr);
       zoom.addEventListener("click", openLightbox);
       lightboxClose.addEventListener("click", closeLightbox);
       lightboxBackdrop.addEventListener("click", closeLightbox);
       document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && sbpQrModal.classList.contains("is-open")) {
+          closeSbpQr();
+          return;
+        }
         if (event.key === "Escape" && lightbox.classList.contains("is-open")) {
           closeLightbox();
         }
