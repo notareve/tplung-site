@@ -1367,7 +1367,8 @@ function setTrendParamButtonText(selectedCount, totalCount) {
 }
 
 function setParamChecklistOptions(values, emptyText, labelFor = (value) => value, preferredValues = null) {
-  const previous = Array.isArray(preferredValues) ? preferredValues : getSelectedTrendParams();
+  const hasPreferredValues = Array.isArray(preferredValues);
+  const previous = hasPreferredValues ? preferredValues : getSelectedTrendParams();
   ui.trendParamList.innerHTML = "";
 
   if (!values.length) {
@@ -1381,7 +1382,7 @@ function setParamChecklistOptions(values, emptyText, labelFor = (value) => value
   }
 
   let selected = previous.filter((value) => values.includes(value));
-  if (!selected.length) {
+  if (!selected.length && (!hasPreferredValues || previous.length)) {
     selected = [values[0]];
   }
 
@@ -1557,15 +1558,24 @@ function refreshTrendView() {
   }
 
   const points = archive.devices[selectedDevice] || [];
+  const latestParams = getLatestArchiveParams(points);
+  const hasSavedTrendParams = Object.prototype.hasOwnProperty.call(prefs.trendParamsByDevice, selectedDevice);
+  const preferredTrendParams = hasSavedTrendParams ? prefs.trendParamsByDevice[selectedDevice] : [latestParams[0]];
   const selectedParams = setParamChecklistOptions(
-    getLatestArchiveParams(points),
+    latestParams,
     "Нет актуальных параметров",
     (param) => displayParamName(selectedDevice, param, names),
-    prefs.trendParamsByDevice[selectedDevice] || []
+    preferredTrendParams
   );
-  if (!selectedParams.length) {
+  if (!latestParams.length) {
     ui.trendSummary.textContent = `${points.length} точек в архиве`;
     ui.trendChart.innerHTML = '<div class="empty">В последней записи выбранного MAC нет параметров</div>';
+    saveLivePrefs({ trendDevice: selectedDevice });
+    return;
+  }
+  if (!selectedParams.length) {
+    ui.trendSummary.textContent = "Параметры не выбраны";
+    ui.trendChart.innerHTML = '<div class="empty">Отметьте один или несколько параметров</div>';
     saveLivePrefs({ trendDevice: selectedDevice });
     return;
   }
