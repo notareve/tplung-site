@@ -608,6 +608,32 @@ p {
   text-align: justify;
 }
 
+.inline-download {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 4px;
+  padding: 4px 9px;
+  border: 1px solid #ffd27d99;
+  border-radius: 6px;
+  background: linear-gradient(145deg, #eeb24b, #d78135);
+  color: #101417;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: normal;
+}
+
+.inline-download::before {
+  content: "↓";
+  font-size: 0.95em;
+  line-height: 1;
+}
+
+.inline-download:hover {
+  background: #ffd36d;
+  color: #101417;
+}
+
 .use-case-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
