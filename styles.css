@@ -468,7 +468,7 @@ p {
 }
 
 .qr-modal-frame {
-  width: min(100%, 340px);
+  width: min(100%, 380px);
   justify-items: center;
   padding: 18px;
 }
@@ -477,6 +477,64 @@ p {
   margin: 0;
   padding-right: 28px;
   font-size: 1.15rem;
+}
+
+.invoice-modal-frame {
+  width: min(100%, 620px);
+  justify-items: stretch;
+  gap: 12px;
+}
+
+.invoice-help {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
+  font-size: 0.9rem;
+}
+
+.invoice-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  border: 1px solid #d8f6f82b;
+  border-radius: var(--radius);
+  background: #0c151de0;
+  padding: 12px;
+}
+
+.invoice-form label {
+  display: grid;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.invoice-form input,
+.invoice-form select,
+.invoice-form textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #7bcff466;
+  border-radius: var(--radius);
+  background: #07101c;
+  color: var(--text);
+  padding: 8px 9px;
+  font: inherit;
+}
+
+.invoice-form textarea {
+  resize: vertical;
+}
+
+.invoice-form .field-wide {
+  grid-column: 1 / -1;
+}
+
+.invoice-req-btn {
+  width: 100%;
+  white-space: normal;
+  line-height: 1.35;
+  text-align: center;
 }
 
 .sbp-qr {
@@ -1992,6 +2050,10 @@ p {
   }
 
   .tool-form {
+    grid-template-columns: 1fr;
+  }
+
+  .invoice-form {
     grid-template-columns: 1fr;
   }
 }

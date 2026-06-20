@@ -457,7 +457,48 @@
       <div class="sbp-qr" aria-live="polite">
         <img id="sbpQrImage" src="" alt="QR-код для оплаты TPlung через СБП" hidden />
         <p id="sbpQrCaption"></p>
+        <button class="btn invoice-req-btn" type="button" id="openInvoiceReqBtn" hidden>Отправить реквизиты организации для счета</button>
       </div>
+    </section>
+  </div>
+
+  <div class="qr-modal" id="invoiceReqModal" aria-hidden="true">
+    <button class="qr-modal-backdrop" type="button" id="invoiceReqBackdrop" aria-label="Закрыть форму реквизитов"></button>
+    <section class="qr-modal-frame invoice-modal-frame" role="dialog" aria-modal="true" aria-labelledby="invoiceReqTitle">
+      <button class="qr-modal-close" type="button" id="invoiceReqClose" aria-label="Закрыть">×</button>
+      <h2 id="invoiceReqTitle">Реквизиты организации для счета</h2>
+      <p class="invoice-help">Только для ИП и ООО: заполните форму и отправьте письмо на ivk16@mail.ru, или просто прикрепите свои реквизиты.</p>
+
+      <form class="invoice-form" id="invoiceForm" novalidate>
+        <label>
+          <span>Тип организации</span>
+          <select id="invoiceClientType">
+            <option value="ООО">ООО</option>
+            <option value="ИП">ИП</option>
+          </select>
+        </label>
+        <label>
+          <span>Наименование организации / ИП</span>
+          <input type="text" id="invoiceName" placeholder="ООО Ромашка / ИП Иванов И.И." />
+        </label>
+        <label>
+          <span>ИНН</span>
+          <input type="text" id="invoiceInn" placeholder="1234567890" />
+        </label>
+        <label>
+          <span>КПП (для ООО)</span>
+          <input type="text" id="invoiceKpp" placeholder="123456789" />
+        </label>
+        <label>
+          <span>E-mail для счета</span>
+          <input type="email" id="invoiceEmail" placeholder="client@example.com" />
+        </label>
+        <label class="field-wide">
+          <span>Комментарий</span>
+          <textarea id="invoiceComment" rows="3" placeholder="Доп. пожелания: адрес и желаемый способ доставки"></textarea>
+        </label>
+        <button class="btn btn-primary field-wide" type="submit">Сформировать письмо</button>
+      </form>
     </section>
   </div>
 
@@ -495,6 +536,17 @@
       const sbpQrBackdrop = document.getElementById("sbpQrBackdrop");
       const sbpQrImage = document.getElementById("sbpQrImage");
       const sbpQrCaption = document.getElementById("sbpQrCaption");
+      const openInvoiceReqBtn = document.getElementById("openInvoiceReqBtn");
+      const invoiceReqModal = document.getElementById("invoiceReqModal");
+      const invoiceReqClose = document.getElementById("invoiceReqClose");
+      const invoiceReqBackdrop = document.getElementById("invoiceReqBackdrop");
+      const invoiceForm = document.getElementById("invoiceForm");
+      const invoiceClientType = document.getElementById("invoiceClientType");
+      const invoiceName = document.getElementById("invoiceName");
+      const invoiceInn = document.getElementById("invoiceInn");
+      const invoiceKpp = document.getElementById("invoiceKpp");
+      const invoiceEmail = document.getElementById("invoiceEmail");
+      const invoiceComment = document.getElementById("invoiceComment");
       const prev = document.getElementById("photoPrevBtn");
       const next = document.getElementById("photoNextBtn");
       const zoom = document.getElementById("photoZoomBtn");
@@ -545,6 +597,7 @@
       function hideSbpQr() {
         sbpQrModal.classList.remove("is-open");
         sbpQrModal.setAttribute("aria-hidden", "true");
+        openInvoiceReqBtn.hidden = true;
         sbpQrImage.hidden = true;
         sbpQrImage.removeAttribute("src");
         sbpQrCaption.textContent = "";
@@ -560,6 +613,39 @@
         sbpQrModal.classList.remove("is-open");
         sbpQrModal.setAttribute("aria-hidden", "true");
         sbpPay.focus();
+      }
+
+      function openInvoiceReq() {
+        invoiceReqModal.classList.add("is-open");
+        invoiceReqModal.setAttribute("aria-hidden", "false");
+        invoiceClientType.focus();
+      }
+
+      function closeInvoiceReq() {
+        invoiceReqModal.classList.remove("is-open");
+        invoiceReqModal.setAttribute("aria-hidden", "true");
+        openInvoiceReqBtn.focus();
+      }
+
+      function openInvoiceMail(subject, body) {
+        const encodedSubject = encodeURIComponent(subject);
+        const encodedBody = encodeURIComponent(body);
+        window.location.href = `mailto:ivk16@mail.ru?subject=${encodedSubject}&body=${encodedBody}`;
+      }
+
+      function getOrderSubject(order) {
+        return `Запрос счета: ${order.photo.alt} (${order.quantity} шт.)`;
+      }
+
+      function getOrderBody(order) {
+        return [
+          "Здравствуйте! Прошу выставить счет.",
+          "",
+          `Товар: ${order.photo.alt}`,
+          `Количество: ${order.quantity}`,
+          `Сумма: ${formatRub(order.total)}`,
+          ""
+        ];
       }
 
       function buildPaymentLink(order) {
@@ -608,6 +694,7 @@
             payload = buildPaymentLink(order);
           }
         } catch (error) {
+          openInvoiceReqBtn.hidden = false;
           sbpQrImage.hidden = true;
           sbpQrImage.removeAttribute("src");
           sbpQrCaption.textContent = "Не удалось создать QR оплаты. Попробуйте позже или свяжитесь с продавцом.";
@@ -616,6 +703,7 @@
         }
 
         if (!payload) {
+          openInvoiceReqBtn.hidden = false;
           sbpQrImage.hidden = true;
           sbpQrImage.removeAttribute("src");
           sbpQrCaption.textContent = "Оплата по СБП пока не подключена - запросите счет по почте ivk16@mail.ru";
@@ -623,6 +711,7 @@
           return;
         }
 
+        openInvoiceReqBtn.hidden = true;
         const qrUrl = new URL("https://api.qrserver.com/v1/create-qr-code/");
         qrUrl.searchParams.set("size", "240x240");
         qrUrl.searchParams.set("data", payload);
@@ -679,6 +768,23 @@
         hideSbpQr();
       });
       sbpPay.addEventListener("click", renderSbpQr);
+      openInvoiceReqBtn.addEventListener("click", openInvoiceReq);
+      invoiceReqClose.addEventListener("click", closeInvoiceReq);
+      invoiceReqBackdrop.addEventListener("click", closeInvoiceReq);
+      invoiceForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const order = getCurrentOrder();
+        const lines = getOrderBody(order);
+        lines.push(`Тип организации: ${invoiceClientType.value}`);
+        lines.push(`Организация / ИП: ${invoiceName.value.trim() || "не указано"}`);
+        lines.push(`ИНН: ${invoiceInn.value.trim() || "не указано"}`);
+        lines.push(`КПП: ${invoiceKpp.value.trim() || "не указано"}`);
+        lines.push(`E-mail для счета: ${invoiceEmail.value.trim() || "не указано"}`);
+        lines.push(`Комментарий: ${invoiceComment.value.trim() || "-"}`);
+        lines.push("");
+        lines.push("Письмо сформировано с сайта TPlung.");
+        openInvoiceMail(getOrderSubject(order), lines.join("\n"));
+      });
       sbpQrClose.addEventListener("click", closeSbpQr);
       sbpQrBackdrop.addEventListener("click", closeSbpQr);
       zoom.addEventListener("click", openLightbox);
@@ -687,6 +793,10 @@
       document.addEventListener("keydown", (event) => {
         if (event.key === "Escape" && sbpQrModal.classList.contains("is-open")) {
           closeSbpQr();
+          return;
+        }
+        if (event.key === "Escape" && invoiceReqModal.classList.contains("is-open")) {
+          closeInvoiceReq();
           return;
         }
         if (event.key === "Escape" && lightbox.classList.contains("is-open")) {
