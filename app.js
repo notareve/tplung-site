@@ -995,19 +995,27 @@ function renderAlertRulesList() {
   }
 }
 
-function refreshNameEditor() {
+function refreshNameEditor({ keepDeviceName = false, keepParamName = false } = {}) {
   const names = loadNames();
   const devices = getKnownDevices();
+  const previousDevice = ui.nameDeviceSelect.value;
+  const previousParam = ui.nameParamSelect.value;
+  const currentDeviceName = ui.deviceNameInput.value;
+  const currentParamName = ui.paramNameInput.value;
   const selectedDevice = setSelectOptions(ui.nameDeviceSelect, devices, "Нет устройств", (addr) => displayDeviceName(addr, names));
   ui.deviceNameInput.disabled = !selectedDevice;
   ui.saveNamesBtn.disabled = !selectedDevice;
   ui.clearNamesBtn.disabled = !Object.keys(names.devices || {}).length;
-  ui.deviceNameInput.value = selectedDevice ? deviceNameEntry(selectedDevice, names).name || "" : "";
+  ui.deviceNameInput.value = keepDeviceName && selectedDevice === previousDevice
+    ? currentDeviceName
+    : selectedDevice ? deviceNameEntry(selectedDevice, names).name || "" : "";
 
   const params = selectedDevice ? getLatestDeviceParams(selectedDevice) : [];
   const selectedParam = setSelectOptions(ui.nameParamSelect, params, "Нет каналов", (param) => displayParamName(selectedDevice, param, names));
   ui.paramNameInput.disabled = !selectedParam;
-  ui.paramNameInput.value = selectedDevice && selectedParam
+  ui.paramNameInput.value = keepParamName && selectedDevice === previousDevice && selectedParam === previousParam
+    ? currentParamName
+    : selectedDevice && selectedParam
     ? deviceNameEntry(selectedDevice, names).channels?.[selectedParam] || ""
     : "";
 }
@@ -1021,8 +1029,8 @@ function refreshAlertEditor() {
   ui.addAlertRuleBtn.disabled = !selectedDevice || selectedDevice === "*" && !getKnownDevices().length;
 }
 
-function refreshLiveTools() {
-  refreshNameEditor();
+function refreshLiveTools({ keepNameDrafts = false } = {}) {
+  refreshNameEditor({ keepDeviceName: keepNameDrafts, keepParamName: keepNameDrafts });
   refreshAlertEditor();
   renderAlertRulesList();
   renderAlertNotifications(evaluateAlertRules(currentLiveData));
@@ -1656,7 +1664,7 @@ async function doScan() {
         currentLiveData = {};
         const portText = selectedPortLabel();
         renderCardsMessage(`Порт ${portText} не отвечает: проверьте, что выбран правильный USB-донгл и устройство отвечает на команды.`);
-        refreshLiveTools();
+        refreshLiveTools({ keepNameDrafts: true });
         ui.lastUpdate.textContent = `Обновление: ${new Date().toLocaleTimeString()}`;
         logLine(`Порт ${portText} не отвечает`);
         return;
@@ -1666,7 +1674,7 @@ async function doScan() {
       const archiveResult = appendArchiveData(data);
       renderCards(data);
       refreshTrendView();
-      refreshLiveTools();
+      refreshLiveTools({ keepNameDrafts: true });
       ui.lastUpdate.textContent = `Обновление: ${new Date().toLocaleTimeString()}`;
       const archiveText = archiveResult.saved ? `архив +${archiveResult.added}` : "архив не сохранен";
       logLine(`Готово: устройств ${deviceCount}, ${archiveText}`);
@@ -1696,7 +1704,7 @@ ui.connectBtn.addEventListener("click", async () => {
     logLine("Порт подключен (USB 12\u00a0Мбит/с)");
     currentLiveData = {};
     renderCards({});
-    refreshLiveTools();
+    refreshLiveTools({ keepNameDrafts: true });
   } catch (e) {
     logLine(`Ошибка подключения: ${e.message}`);
   }
@@ -1758,12 +1766,12 @@ document.addEventListener("keydown", (event) => {
 ui.clearArchiveBtn.addEventListener("click", () => {
   localStorage.removeItem(ARCHIVE_STORAGE_KEY);
   refreshTrendView();
-  refreshLiveTools();
+  refreshLiveTools({ keepNameDrafts: true });
   logLine("Архив трендов очищен");
 });
 
 ui.nameDeviceSelect.addEventListener("change", refreshNameEditor);
-ui.nameParamSelect.addEventListener("change", refreshNameEditor);
+ui.nameParamSelect.addEventListener("change", () => refreshNameEditor({ keepDeviceName: true }));
 ui.saveNamesBtn.addEventListener("click", () => {
   const addr = ui.nameDeviceSelect.value;
   if (!addr) {
