@@ -46,6 +46,7 @@ const ARCHIVE_STORAGE_KEY = "tplung-live-archive-v2";
 const NAMES_STORAGE_KEY = "tplung-live-names-v1";
 const ALERT_RULES_STORAGE_KEY = "tplung-live-alert-rules-v1";
 const LAST_SEEN_STORAGE_KEY = "tplung-live-last-seen-v1";
+const LIVE_PREFS_STORAGE_KEY = "tplung-live-prefs-v1";
 const ARCHIVE_MAX_POINTS_PER_DEVICE = 2000;
 const TREND_TIME_RANGES = {
   all: { ms: null, label: "весь архив" },
@@ -286,6 +287,10 @@ function clampInt(v, min, max, fallback) {
     return fallback;
   }
   return Math.max(min, Math.min(max, Math.floor(v)));
+}
+
+function clampInputValue(input, min, max, fallback) {
+  input.value = String(clampInt(Number(input.value), min, max, fallback));
 }
 
 function modbusCrc16(bytes) {
@@ -726,6 +731,76 @@ function saveJsonStore(key, value) {
   } catch (_e) {
     return false;
   }
+}
+
+function normalizeLivePrefs(rawPrefs = {}) {
+  const trendParamsByDevice = rawPrefs.trendParamsByDevice && typeof rawPrefs.trendParamsByDevice === "object"
+    ? rawPrefs.trendParamsByDevice
+    : {};
+  const normalizedTrendParamsByDevice = {};
+  for (const [device, params] of Object.entries(trendParamsByDevice)) {
+    if (typeof device === "string" && Array.isArray(params)) {
+      normalizedTrendParamsByDevice[device] = params.filter((param) => typeof param === "string");
+    }
+  }
+
+  return {
+    version: 1,
+    scanSec: clampInt(Number(rawPrefs.scanSec), 3, 60, 10),
+    scanPhase: rawPrefs.scanPhase !== false,
+    measurePhase: rawPrefs.measurePhase !== false,
+    autoRefresh: rawPrefs.autoRefresh === true,
+    autoSec: clampInt(Number(rawPrefs.autoSec), 5, 180, 15),
+    trendDevice: typeof rawPrefs.trendDevice === "string" ? rawPrefs.trendDevice : "",
+    trendTimeRange: TREND_TIME_RANGES[rawPrefs.trendTimeRange] ? rawPrefs.trendTimeRange : "all",
+    trendParamsByDevice: normalizedTrendParamsByDevice
+  };
+}
+
+function loadLivePrefs() {
+  return normalizeLivePrefs(loadJsonStore(LIVE_PREFS_STORAGE_KEY, { version: 1 }));
+}
+
+function applyLivePrefs() {
+  const prefs = loadLivePrefs();
+  ui.scanSec.value = String(prefs.scanSec);
+  ui.scanPhase.checked = prefs.scanPhase;
+  ui.measurePhase.checked = prefs.measurePhase;
+  ui.autoRefresh.checked = prefs.autoRefresh;
+  ui.autoSec.value = String(prefs.autoSec);
+  ui.trendTimeRange.value = prefs.trendTimeRange;
+}
+
+function saveLivePrefs(patch = {}) {
+  const current = loadLivePrefs();
+  const selectedDevice = typeof patch.trendDevice === "string"
+    ? patch.trendDevice
+    : ui.trendDeviceSelect.value || current.trendDevice;
+  const trendParamsByDevice = patch.trendParamsByDevice && typeof patch.trendParamsByDevice === "object"
+    ? patch.trendParamsByDevice
+    : { ...current.trendParamsByDevice };
+  if (!patch.skipTrendParams) {
+    const paramsDevice = ui.trendDeviceSelect.value || current.trendDevice;
+    if (paramsDevice) {
+      trendParamsByDevice[paramsDevice] = getSelectedTrendParams();
+    }
+  }
+
+  const next = normalizeLivePrefs({
+    ...current,
+    scanSec: ui.scanSec.value,
+    scanPhase: ui.scanPhase.checked,
+    measurePhase: ui.measurePhase.checked,
+    autoRefresh: ui.autoRefresh.checked,
+    autoSec: ui.autoSec.value,
+    trendDevice: selectedDevice,
+    trendTimeRange: ui.trendTimeRange.value,
+    trendParamsByDevice,
+    ...patch
+  });
+
+  saveJsonStore(LIVE_PREFS_STORAGE_KEY, next);
+  return next;
 }
 
 function loadNames() {
@@ -1251,7 +1326,7 @@ function getLatestArchiveParams(points) {
   return Object.keys(latestPoint.values).sort((a, b) => a.localeCompare(b, "ru-RU", { numeric: true }));
 }
 
-function setSelectOptions(select, values, emptyText, labelFor = (value) => value) {
+function setSelectOptions(select, values, emptyText, labelFor = (value) => value, preferredValue = null) {
   const previous = select.value;
   select.innerHTML = "";
 
@@ -1271,7 +1346,11 @@ function setSelectOptions(select, values, emptyText, labelFor = (value) => value
     select.appendChild(opt);
   }
   select.disabled = false;
-  select.value = values.includes(previous) ? previous : values[0];
+  select.value = preferredValue && values.includes(preferredValue)
+    ? preferredValue
+    : values.includes(previous)
+      ? previous
+      : values[0];
   return select.value;
 }
 
@@ -1287,8 +1366,8 @@ function setTrendParamButtonText(selectedCount, totalCount) {
   ui.trendParamButton.textContent = selectedCount ? `Выбрано: ${selectedCount}` : "Выберите параметры";
 }
 
-function setParamChecklistOptions(values, emptyText, labelFor = (value) => value) {
-  const previous = getSelectedTrendParams();
+function setParamChecklistOptions(values, emptyText, labelFor = (value) => value, preferredValues = null) {
+  const previous = Array.isArray(preferredValues) ? preferredValues : getSelectedTrendParams();
   ui.trendParamList.innerHTML = "";
 
   if (!values.length) {
@@ -1315,6 +1394,7 @@ function setParamChecklistOptions(values, emptyText, labelFor = (value) => value
     checkbox.checked = selected.includes(value);
     checkbox.addEventListener("change", () => {
       setTrendParamButtonText(getSelectedTrendParams().length, values.length);
+      saveLivePrefs();
       renderSelectedTrendChart();
     });
     label.append(checkbox, document.createTextNode(labelFor(value)));
@@ -1459,8 +1539,15 @@ function renderSelectedTrendChart() {
 function refreshTrendView() {
   const archive = loadArchive();
   const names = loadNames();
+  const prefs = loadLivePrefs();
   const devices = Object.keys(archive.devices).filter((addr) => archive.devices[addr]?.length).sort();
-  const selectedDevice = setSelectOptions(ui.trendDeviceSelect, devices, "Нет данных", (addr) => displayDeviceName(addr, names));
+  const selectedDevice = setSelectOptions(
+    ui.trendDeviceSelect,
+    devices,
+    "Нет данных",
+    (addr) => displayDeviceName(addr, names),
+    prefs.trendDevice
+  );
 
   if (!selectedDevice) {
     setParamChecklistOptions([], "Нет параметров");
@@ -1473,16 +1560,19 @@ function refreshTrendView() {
   const selectedParams = setParamChecklistOptions(
     getLatestArchiveParams(points),
     "Нет актуальных параметров",
-    (param) => displayParamName(selectedDevice, param, names)
+    (param) => displayParamName(selectedDevice, param, names),
+    prefs.trendParamsByDevice[selectedDevice] || []
   );
   if (!selectedParams.length) {
     ui.trendSummary.textContent = `${points.length} точек в архиве`;
     ui.trendChart.innerHTML = '<div class="empty">В последней записи выбранного MAC нет параметров</div>';
+    saveLivePrefs({ trendDevice: selectedDevice });
     return;
   }
 
   const filtered = filterTrendPointsByTime(points);
   renderTrendChart(filtered.points, selectedParams, points.length, filtered.label);
+  saveLivePrefs({ trendDevice: selectedDevice });
 }
 
 function renderCards(data) {
@@ -1705,6 +1795,9 @@ ui.connectBtn.addEventListener("click", async () => {
     currentLiveData = {};
     renderCards({});
     refreshLiveTools({ keepNameDrafts: true });
+    if (ui.autoRefresh.checked) {
+      client.startAutoRefresh(doScan);
+    }
   } catch (e) {
     logLine(`Ошибка подключения: ${e.message}`);
   }
@@ -1741,8 +1834,21 @@ ui.refreshPortsBtn.addEventListener("click", async () => {
 
 ui.scanBtn.addEventListener("click", doScan);
 
-ui.trendDeviceSelect.addEventListener("change", refreshTrendView);
-ui.trendTimeRange.addEventListener("change", renderSelectedTrendChart);
+ui.scanSec.addEventListener("change", () => {
+  clampInputValue(ui.scanSec, 3, 60, 10);
+  saveLivePrefs();
+});
+ui.scanPhase.addEventListener("change", () => saveLivePrefs());
+ui.measurePhase.addEventListener("change", () => saveLivePrefs());
+
+ui.trendDeviceSelect.addEventListener("change", () => {
+  saveLivePrefs({ trendDevice: ui.trendDeviceSelect.value, skipTrendParams: true });
+  refreshTrendView();
+});
+ui.trendTimeRange.addEventListener("change", () => {
+  saveLivePrefs();
+  renderSelectedTrendChart();
+});
 ui.trendParamButton.addEventListener("click", () => {
   ui.trendParamList.hidden = !ui.trendParamList.hidden;
 });
@@ -1872,6 +1978,7 @@ ui.exportArchiveBtn.addEventListener("click", exportArchiveCsv);
 ui.exportVisibleArchiveBtn.addEventListener("click", exportVisibleArchiveCsv);
 
 ui.autoRefresh.addEventListener("change", () => {
+  saveLivePrefs();
   if (!ui.autoRefresh.checked) {
     client.stopAutoRefresh();
     logLine("Автообновление выключено");
@@ -1883,6 +1990,8 @@ ui.autoRefresh.addEventListener("change", () => {
 });
 
 ui.autoSec.addEventListener("change", () => {
+  clampInputValue(ui.autoSec, 5, 180, 15);
+  saveLivePrefs();
   if (ui.autoRefresh.checked) {
     client.startAutoRefresh(doScan);
     logLine(`Новый интервал автообновления: ${ui.autoSec.value} сек`);
@@ -1903,6 +2012,7 @@ if ("serial" in navigator && navigator.serial.addEventListener) {
   });
 }
 
+applyLivePrefs();
 setStatus(false);
 renderCards({});
 refreshTrendView();
