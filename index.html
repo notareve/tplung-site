@@ -22,7 +22,7 @@
       <a href="#connection">Подключение</a>
       <a href="#telemetry">Телеметрия</a>
       <a href="#keenetic">Keenetic</a>
-      <a href="#photos">Фото</a>
+      <a href="#gallery">Фото</a>
       <a href="#interfaces">Интерфейсы</a>
       <a class="nav-action" href="./firmware.html">Настроить TPlung</a>
       <a class="nav-action nav-live" href="./live.html">Live</a>
@@ -38,7 +38,7 @@
         <section id="photos" class="photo-carousel is-portrait" aria-label="Фотографии устройства TPlung">
           <figure class="product-photo carousel-stage">
             <button class="carousel-zoom-button" type="button" id="photoZoomBtn" aria-label="Увеличить фото">
-              <img id="photoCarouselImage" src="./assets/photos/photo_2026-06-19_22-47-36.jpg" alt="Корпус с кабелем" />
+              <img id="photoCarouselImage" src="./assets/photos/photo_2026-06-19_22-47-48.jpg" alt="Закрытый корпус с платой" />
             </button>
           </figure>
           <div class="carousel-controls">
@@ -48,8 +48,8 @@
             </div>
             <button class="carousel-btn" type="button" id="photoPrevBtn" aria-label="Предыдущее фото">‹</button>
             <div class="carousel-meta">
-              <span id="photoCarouselCounter">1 / 8</span>
-              <strong id="photoCarouselCaption">Корпус с кабелем</strong>
+              <span id="photoCarouselCounter">1 / 2</span>
+              <strong id="photoCarouselCaption">Закрытый корпус с платой</strong>
             </div>
             <button class="carousel-btn" type="button" id="photoNextBtn" aria-label="Следующее фото">›</button>
             <div class="buy-panel" id="buyPanel" hidden>
@@ -71,7 +71,6 @@
 
         <div class="hero-actions">
           <a class="btn btn-primary" href="./keenetic.html">Сценарий для роутеров</a>
-          <a class="btn" href="#features">Смотреть возможности</a>
           <a class="btn" href="https://www.rustore.ru/catalog/app/ru.kompius.thermo_plung" target="_blank" rel="noopener noreferrer">Приложение в RuStore</a>
         </div>
       </div>
@@ -430,6 +429,15 @@
         </article>
       </div>
     </section>
+
+    <section id="gallery" class="section-block">
+      <div class="section-head">
+        <p class="eyebrow">Фотографии</p>
+        <h2>Галерея устройства TPlung</h2>
+      </div>
+
+      <div class="gallery-grid" id="galleryGrid"></div>
+    </section>
   </main>
 
   <footer class="site-footer">
@@ -505,14 +513,17 @@
   <script>
     (() => {
       const photos = [
+        { src: "./assets/photos/photo_2026-06-19_22-47-48.jpg", alt: "Закрытый корпус с платой", price: "1500 ₽", shape: "portrait" },
+        { src: "./assets/photos/photo_2026-06-19_22-48-08.jpg", alt: "CH592F с прошивкой TPlung", price: "1200 ₽", shape: "portrait" }
+      ];
+
+      const galleryPhotos = [
         { src: "./assets/photos/photo_2026-06-19_22-47-36.jpg", alt: "Корпус с кабелем", price: "1500 ₽", shape: "portrait" },
         { src: "./assets/photos/photo_2026-06-19_22-47-25.jpg", alt: "Плата с USB", price: "1200 ₽", shape: "portrait" },
-        { src: "./assets/photos/photo_2026-06-19_22-47-48.jpg", alt: "Закрытый корпус", price: "1500 ₽", shape: "portrait" },
         { src: "./assets/photos/photo_2026-06-19_22-47-52.jpg", alt: "Плата в корпусе", price: "1500 ₽", shape: "landscape" },
         { src: "./assets/photos/photo_2026-06-19_22-47-56.jpg", alt: "Корпус с гребенкой", price: "1500 ₽", shape: "portrait" },
         { src: "./assets/photos/photo_2026-06-19_22-48-00.jpg", alt: "Вид сбоку", price: "1500 ₽", shape: "portrait" },
-        { src: "./assets/photos/photo_2026-06-19_22-48-04.jpg", alt: "Сдвинутая крышка", price: "1500 ₽", shape: "portrait" },
-        { src: "./assets/photos/photo_2026-06-19_22-48-08.jpg", alt: "CH592F с прошивкой TPlung", price: "1200 ₽", shape: "portrait" }
+        { src: "./assets/photos/photo_2026-06-19_22-48-04.jpg", alt: "Сдвинутая крышка", price: "1500 ₽", shape: "portrait" }
       ];
 
       const sbpConfig = {
@@ -555,7 +566,35 @@
       const lightboxCaption = document.getElementById("photoLightboxCaption");
       const lightboxClose = document.getElementById("photoLightboxClose");
       const lightboxBackdrop = document.getElementById("photoLightboxBackdrop");
-      let index = 0;
+      const galleryGrid = document.getElementById("galleryGrid");
+
+      function renderGallery() {
+        galleryGrid.innerHTML = "";
+        galleryPhotos.forEach((photo, idx) => {
+          const item = document.createElement("a");
+          item.href = "#";
+          item.className = "gallery-item";
+          item.setAttribute("aria-label", photo.alt);
+          item.innerHTML = `
+            <img src="${photo.src}" alt="${photo.alt}" loading="lazy" />
+            <div class="gallery-item-overlay">
+              <span class="gallery-item-alt">${photo.alt}</span>
+            </div>
+          `;
+          item.addEventListener("click", (e) => {
+            e.preventDefault();
+            showLightbox(photo);
+          });
+          galleryGrid.appendChild(item);
+        });
+      }
+
+      function showLightbox(photo) {
+        lightboxImage.src = photo.src;
+        lightboxImage.alt = photo.alt;
+        lightboxCaption.textContent = photo.alt;
+        openLightbox();
+      }
 
       const rubFormatter = new Intl.NumberFormat("ru-RU", {
         style: "currency",
@@ -803,6 +842,9 @@
           closeLightbox();
         }
       });
+
+      renderPhoto(0);
+      renderGallery();
     })();
   </script>
 </body>
