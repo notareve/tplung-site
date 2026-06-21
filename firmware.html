@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Настройка TPlung по USB через Web Serial и AT-команды в браузере." />
-  <title>Настройка TPlung по USB</title>
+  <meta name="description" content="Настройка TPlung по USB через Web Serial: датчики 1-Wire, HR202, Энергомера, BLE advertising и параметры питания." />
+  <title>Настройка TPlung по USB через Web Serial</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="./styles.css" />
 </head>
@@ -29,7 +29,7 @@
   <main class="app live-shell firmware-shell">
     <header class="toolbar live-toolbar">
       <div class="title-wrap">
-        <h1>Настройка TPlung по USB</h1>
+        <h1>Настройка TPlung по USB через Web Serial</h1>
       </div>
 
       <div class="controls">
@@ -75,7 +75,7 @@
 
       <section class="settings-screen active" data-settings-screen="general" role="tabpanel">
         <div class="settings-section-head">
-          <h2>General settings</h2>
+          <h2>Общие настройки TPlung и BLE advertising</h2>
         </div>
         <div class="settings-form">
           <div class="setting-row"><span>Sync RTC</span><button class="btn" type="button" name="currentTime" value="sync">Синхронизировать</button></div>
@@ -96,7 +96,7 @@
 
       <section class="settings-screen" data-settings-screen="w1" role="tabpanel" hidden>
         <div class="settings-section-head">
-          <h2>1-Wire settings</h2>
+          <h2>Настройки 1-Wire датчиков температуры</h2>
         </div>
         <div class="settings-form">
           <label class="setting-row switch-row"><span>W1 Therm</span><input type="checkbox" name="w1Therm" checked /></label>
@@ -109,7 +109,7 @@
 
       <section class="settings-screen" data-settings-screen="analog" role="tabpanel" hidden>
         <div class="settings-section-head">
-          <h2>Analog settings</h2>
+          <h2>Настройки HR202 и термисторов</h2>
         </div>
         <div class="settings-form">
           <fieldset class="settings-group">
@@ -135,7 +135,7 @@
 
       <section class="settings-screen" data-settings-screen="energo" role="tabpanel" hidden>
         <div class="settings-section-head">
-          <h2>Energomera settings</h2>
+          <h2>Настройки счетчиков Энергомера CE308</h2>
         </div>
         <div class="settings-form">
           <fieldset class="settings-group">

@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Сценарий использования TPlung как USB-донгла для Keenetic: MQTT, e-mail отчеты, BLE сбор данных и эксплуатация." />
-  <title>TPlung - сценарий для роутеров</title>
+  <meta name="description" content="TPlung для Keenetic: USB-донгл собирает BLE-датчики, публикует MQTT, отправляет e-mail отчеты и работает с Entware." />
+  <title>TPlung для Keenetic: USB-донгл, MQTT, отчеты</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="./styles.css" />
 </head>
@@ -32,7 +32,7 @@
     <section id="scenario" class="section-block">
       <div class="section-head">
         <p class="eyebrow">Сценарий для роутеров</p>
-        <h1>TPlung как USB-донгл для роутера Keenetic</h1>
+        <h1>TPlung для Keenetic: USB-донгл, MQTT и отчеты</h1>
         <p>
           В этом сценарии роутер Keenetic работает как центральный узел: USB-донгл TPlung делает локальные
           измерения на собственных датчиках, собирает телеметрию по BLE от других TPlung устройств,
@@ -68,7 +68,7 @@
     <section id="steps" class="section-block split-section">
       <div class="section-head">
         <p class="eyebrow">Пошагово</p>
-        <h2>Быстрый путь запуска</h2>
+        <h2>Запуск USB-донгла TPlung на Keenetic</h2>
         <p>
           Ниже опорная последовательность для стенда Keenetic + Entware + TPlung.
           Набор пакетов и скриптов может отличаться в вашей сборке, но логика этапов остается той же.
@@ -97,7 +97,7 @@
     <section id="mqtt" class="section-block">
       <div class="section-head">
         <p class="eyebrow">MQTT брокер</p>
-        <h2>Пример топиков и проверки</h2>
+        <h2>MQTT топики TPlung и проверка данных</h2>
       </div>
 
       <div class="interface-grid">
@@ -126,7 +126,7 @@ Binding/...</pre>
     <section id="email" class="section-block">
       <div class="section-head">
         <p class="eyebrow">Ежедневные e-mail отчеты</p>
-        <h2>Что отправляется каждый день</h2>
+        <h2>E-mail отчеты TPlung по датчикам и счетчикам</h2>
         <p>
           Основной ежедневный сценарий формирует HTML-отчет устройств: датчики, энергометрия,
           свежесть данных, RSSI, состояние батареи и расчет потребления по тарифам, если они заданы в конфигурации.
@@ -163,7 +163,7 @@ Binding/...</pre>
     <section id="mail-control" class="section-block">
       <div class="section-head">
         <p class="eyebrow">E-mail управление</p>
-        <h2>Команды через почтовый ящик</h2>
+        <h2>E-mail команды для роутера Keenetic</h2>
       </div>
 
       <div class="interface-grid mail-control-grid">
@@ -199,7 +199,7 @@ Attachment: 7z_data.7z</pre>
     <section id="ops" class="section-block">
       <div class="section-head">
         <p class="eyebrow">Эксплуатация</p>
-        <h2>Надежная работа каждый день</h2>
+        <h2>Эксплуатация TPlung, MQTT и e-mail отчетов</h2>
       </div>
 
       <div class="interface-grid">

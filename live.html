@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="TPlung Live: браузерный Web Serial мониторинг BLE advertising пакетов, тренды, локальный архив и CSV экспорт." />
-  <title>TPlung Live</title>
+  <meta name="description" content="TPlung Live показывает BLE advertising и локальные измерения через Web Serial: датчики, пороги, тренды, CSV и USB-мониторинг." />
+  <title>TPlung Live: Web Serial мониторинг BLE датчиков</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="./styles.css" />
 </head>
@@ -29,8 +29,8 @@
     <header class="toolbar live-toolbar">
       <div class="title-wrap">
         <p class="eyebrow">Web Serial dashboard</p>
-        <h1>TPlung Live</h1>
-        <p>USB мониторинг BLE advertising пакетов и локальных измерений</p>
+        <h1>TPlung Live: Web Serial мониторинг BLE датчиков</h1>
+        <p>USB-мониторинг BLE advertising пакетов, локальных измерений, порогов и трендов датчиков.</p>
       </div>
 
       <div class="controls">
@@ -94,7 +94,7 @@
         <div class="tool-head">
           <div>
             <p class="eyebrow">Local labels</p>
-            <h2>Имена</h2>
+            <h2>Имена датчиков TPlung</h2>
           </div>
           <button id="clearNamesBtn" class="btn" type="button">Сбросить</button>
         </div>
@@ -124,7 +124,7 @@
         <div class="tool-head">
           <div>
             <p class="eyebrow">Live alerts</p>
-            <h2>Пороги</h2>
+            <h2>Пороги температуры и влажности</h2>
           </div>
           <span id="alertSummary" class="muted">Правил нет</span>
         </div>
@@ -164,7 +164,7 @@
       <div class="trend-head">
         <div>
           <p class="eyebrow">Local archive</p>
-          <h2>Тренды</h2>
+          <h2>Тренды BLE-датчиков и CSV архив</h2>
         </div>
         <div class="trend-head-actions">
           <button id="exportVisibleArchiveBtn" class="btn" type="button">Экспорт видимого CSV</button>
