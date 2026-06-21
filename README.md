@@ -44,7 +44,8 @@ Live-панель:
 - Нужен безопасный контекст: `https://` или `http://localhost`.
 - Прямой запуск файла `index.html` через `file://` не подойдет.
 - Выбор serial-порта разрешается пользователем через кнопку "Подключить порт".
-- Для публикации на `kompius.ru` размещайте файлы под одним HTTPS-доменом, например `/tplung/`, чтобы `localStorage` и разрешения Web Serial не дробились между `www` и non-`www`.
+- Публичный адрес сайта: `https://tplung.kompius.ru/`. Размещайте все файлы под этим HTTPS-доменом, чтобы `localStorage` и разрешения Web Serial не дробились между разными origin.
+- `robots.txt` указывает поисковикам на карту сайта `https://tplung.kompius.ru/sitemaps.xml`.
 
 ## Использование с Keenetic
 

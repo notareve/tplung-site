@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://tplung.kompius.ru/sitemaps.xml
