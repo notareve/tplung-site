@@ -707,6 +707,15 @@ p {
 
 .section-block {
   padding: 72px 0 0;
+  scroll-margin-top: 96px;
+}
+
+#usb-modem {
+  scroll-margin-top: 0px;
+}
+
+#keenetic {
+  scroll-margin-top: -100px;
 }
 
 .section-head {
@@ -899,6 +908,9 @@ p {
   font-size: 0.82rem;
   line-height: 1.45;
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  overflow-x: auto;
 }
 
 .report-panel {
@@ -1217,6 +1229,144 @@ p {
 .timeline-step strong {
   display: block;
   margin-top: 8px;
+}
+
+.modem-highlight {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.modem-diagrams {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.modem-checklist {
+  margin-top: 12px;
+}
+
+.checklist-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.checklist-grid > div {
+  border: 1px solid #d8f6f82e;
+  border-radius: var(--radius);
+  background: #07101c99;
+  padding: 12px;
+}
+
+.checklist-grid strong {
+  display: block;
+  color: #ffe09a;
+  margin-bottom: 8px;
+}
+
+.checklist-grid ul {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.checklist-grid li + li {
+  margin-top: 6px;
+}
+
+.keenetic-shots {
+  margin-top: 12px;
+}
+
+.keenetic-shots-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(320px, 460px));
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.keenetic-shot {
+  margin: 0;
+  border: 1px solid #d8f6f833;
+  border-radius: var(--radius);
+  background: #07101c99;
+  overflow: hidden;
+}
+
+.keenetic-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 460px;
+  object-fit: contain;
+  background: #0b151f;
+}
+
+.keenetic-shot-native img {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+.keenetic-shot-open {
+  display: block;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  cursor: zoom-in;
+}
+
+.keenetic-shot-open:focus-visible {
+  outline: 2px solid #7bcff4;
+  outline-offset: 2px;
+}
+
+.keenetic-shot figcaption {
+  padding: 10px 12px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.keenetic-shot-wide {
+  grid-column: 1 / -1;
+}
+
+.diagram-panel {
+  padding: 14px;
+  overflow: hidden;
+}
+
+.diagram-panel figcaption {
+  margin-bottom: 12px;
+  color: #ffe09a;
+  font-size: 0.95rem;
+  font-weight: 760;
+}
+
+.diagram-panel svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid #d8f6f82b;
+  border-radius: var(--radius);
+  background: #0b151f;
+}
+
+.modem-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
 }
 
 .site-footer {
@@ -1941,6 +2091,16 @@ p {
 
   .live-tools-grid,
   .alert-form {
+    grid-template-columns: 1fr;
+  }
+
+  .modem-highlight,
+  .modem-steps,
+  .checklist-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .keenetic-shots-grid {
     grid-template-columns: 1fr;
   }
 }

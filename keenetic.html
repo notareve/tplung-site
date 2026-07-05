@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="TPlung для Keenetic: USB-донгл собирает BLE-датчики, публикует MQTT, отправляет e-mail отчеты и работает с Entware." />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://tplung.kompius.ru/keenetic.html" />
   <title>TPlung для Keenetic: USB-донгл, MQTT, отчеты</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="./styles.css" />
@@ -17,7 +19,7 @@
     </a>
 
     <nav class="site-nav" aria-label="Навигация по странице">
-      <a href="#scenario">Сценарий</a>
+      <a href="#usb-modem">USB-модем без Entware</a>
       <a href="#steps">Этапы</a>
       <a href="#mqtt">MQTT</a>
       <a href="#email">E-mail отчеты</a>
@@ -31,13 +33,13 @@
   <main class="site-shell">
     <section id="scenario" class="section-block">
       <div class="section-head">
-        <p class="eyebrow">Сценарий для роутеров</p>
-        <h1>TPlung для Keenetic: USB-донгл, MQTT и отчеты</h1>
+        <p class="eyebrow">Сценарий с Entware</p>
+        <h1>TPlung для Keenetic: Entware, USB-донгл, MQTT и отчеты</h1>
         <p>
-          В этом сценарии роутер Keenetic работает как центральный узел: USB-донгл TPlung делает локальные
-          измерения на собственных датчиках, собирает телеметрию по BLE от других TPlung устройств,
-          публикует значения в MQTT брокер, отправляет ежедневные отчеты на e-mail и может принимать
-          сервисные команды через почтовый ящик.
+          Это классический сценарий с Entware: роутер Keenetic работает как центральный узел, USB-донгл TPlung
+          делает локальные измерения на собственных датчиках, собирает телеметрию по BLE от других TPlung
+          устройств, публикует значения в MQTT брокер, отправляет ежедневные отчеты на e-mail и может
+          принимать сервисные команды через почтовый ящик.
         </p>
       </div>
 
@@ -216,13 +218,222 @@ Attachment: 7z_data.7z</pre>
           <p>Оставьте MQTT для онлайн-автоматизации, а e-mail отчеты для ежедневной аналитики и журнала состояния объекта.</p>
         </article>
       </div>
+    </section>
 
-      <div class="hero-actions">
-        <a class="btn" href="./index.html#keenetic">Краткая версия на главной</a>
-        <a class="btn btn-primary" href="./live.html">Открыть TPlung Live</a>
+    <section id="usb-modem" class="section-block">
+      <div class="section-head">
+        <p class="eyebrow">Keenetic как удаленный шлюз телеметрии для Home Assistant</p>
+        <h2>Сбор телеметрии в режиме эмуляции USB-модема</h2>
+        <p>
+          Для этого сценария на Keenetic нужен только системный модемный компонент: EntWare не требуется.
+          После задания AT-команды в профиле 3G/4G телеметрия появляется в системном журнале JSON-объектами,
+          которые далее можно забирать по REST API в Home Assistant или другие интеграции.
+        </p>
       </div>
+
+      <div class="modem-highlight">
+        <article class="interface-panel accent-panel">
+          <h3>Минимум действий на Keenetic</h3>
+          <p>1) Установить компонент ОС для USB-модемов.</p>
+          <p>2) В настройках подключения 3G/4G включить дополнительную инициализацию и в поле AT1 указать <strong>ATSCAN</strong> или <strong>ATMEAS</strong>.</p>
+        </article>
+        <article class="interface-panel">
+          <h3>Что будет в журнале</h3>
+          <p>Процесс modem/chat пишет сервисные строки (send/expect), а затем JSON с измерениями по устройствам.</p>
+          <p>Эти JSON-строки являются готовым источником для REST и дальнейшего импорта в Home Assistant.</p>
+        </article>
+      </div>
+
+      <article class="interface-panel modem-checklist">
+        <h3>Пошагово: только компонент ОС + AT-команда</h3>
+        <div class="checklist-grid">
+          <div>
+            <strong>Шаг 1. Компоненты операционной системы</strong>
+            <ul>
+              <li>Откройте список компонентов Keenetic.</li>
+              <li>Добавьте модемный компонент ОС (без EntWare).</li>
+            </ul>
+          </div>
+          <div>
+            <strong>Шаг 2. Подключение 3G/4G</strong>
+            <ul>
+              <li>Откройте профиль подключения модема.</li>
+              <li>Включите поле дополнительной инициализации.</li>
+              <li>AT1 = <code>ATSCAN</code> для BLE-сбора, либо <code>ATMEAS</code> для локальных измерений.</li>
+            </ul>
+          </div>
+          <div>
+            <strong>Шаг 3. Контроль результата</strong>
+            <ul>
+              <li>Проверьте системный журнал: должны идти JSON-объекты с <code>mac</code>, <code>T*</code>, <code>H*</code>, <code>batt</code>, <code>E*</code>.</li>
+              <li>Отдайте эти данные в REST API для внешнего чтения (Home Assistant, скрипты, Grafana).</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <article class="interface-panel keenetic-shots">
+        <h3>Реальные экраны Keenetic</h3>
+        <p>Ниже реальные скриншоты из веб-интерфейса: установка компонента ОС, задание AT-команды и JSON в системном журнале.</p>
+        <div class="keenetic-shots-grid">
+          <figure class="keenetic-shot keenetic-shot-native">
+            <button class="keenetic-shot-open" type="button" data-lightbox-src="./assets/keenetic/keenetic-os-components.png" data-lightbox-caption="1) Компоненты ОС: добавить модемный компонент Keenetic.">
+              <img src="./assets/keenetic/keenetic-os-components.png" alt="Компоненты операционной системы Keenetic: модемный компонент" loading="lazy" />
+            </button>
+            <figcaption>1) Компоненты ОС: добавить модемный компонент Keenetic.</figcaption>
+          </figure>
+          <figure class="keenetic-shot keenetic-shot-native">
+            <button class="keenetic-shot-open" type="button" data-lightbox-src="./assets/keenetic/keenetic-modem-at-init.png" data-lightbox-caption="2) Профиль 3G/4G: AT1 = ATSCAN или ATMEAS.">
+              <img src="./assets/keenetic/keenetic-modem-at-init.png" alt="Настройки 3G/4G в Keenetic, поле AT1 с командой ATSCAN" loading="lazy" />
+            </button>
+            <figcaption>2) Профиль 3G/4G: AT1 = ATSCAN или ATMEAS.</figcaption>
+          </figure>
+          <figure class="keenetic-shot keenetic-shot-wide">
+            <button class="keenetic-shot-open" type="button" data-lightbox-src="./assets/keenetic/keenetic-log-json.png" data-lightbox-caption="3) Системный журнал: строки chat/modem и JSON-телеметрия для REST API.">
+              <img src="./assets/keenetic/keenetic-log-json.png" alt="Системный журнал Keenetic со строками chat и JSON телеметрии" loading="lazy" />
+            </button>
+            <figcaption>3) Системный журнал: строки chat/modem и JSON-телеметрия для REST API.</figcaption>
+          </figure>
+        </div>
+      </article>
+
+      <div class="modem-steps">
+        <article class="timeline-step">
+          <span>01</span>
+          <strong>Задать AT-команду в модеме</strong>
+          <p>Используйте <code>ATSCAN</code> для BLE-сканирования и сбора устройств или <code>ATMEAS</code> для локальных каналов.</p>
+          <pre class="code-block">AT1=ATSCAN
+# либо
+AT1=ATMEAS</pre>
+        </article>
+        <article class="timeline-step">
+          <span>02</span>
+          <strong>Убедиться, что JSON идет в лог</strong>
+          <p>В журнале должны появляться строки от <code>chat[...]</code>, затем пакеты телеметрии в JSON.</p>
+          <pre class="code-block">send(atscan^M)
+expect(OK)
+{"mac":"E4:83:A9:68:8A:B8","t1":26.1,"H1":44.0,"batt":3}</pre>
+        </article>
+        <article class="timeline-step">
+          <span>03</span>
+          <strong>Забирать данные по REST</strong>
+          <p>Чтение системного лога можно делать напрямую через RCI REST API Keenetic с авторизацией.</p>
+          <pre class="code-block">curl -N "https://rest-api.netcraze.pro/rci/show/log" \
+  --user "tplung:tplung" \
+  --request POST \
+  --header "Content-Type: application/json" \
+  --data-ascii '{"max-lines":10,"once":"false"}'</pre>
+          <pre class="code-block">{
+  "log": {
+    "163770": {
+      "message": {
+        "level": "Info",
+        "label": "I",
+        "message": "{\"mac\":\"E4:83:A9:68:8A:B8\",\"t1\":26.8,\"H1\":45.7,\"batt\":3}^M"
+      },
+      "timestamp": "Jul  4 17:39:28",
+      "ident": "chat[2575]",
+      "id": 163770
+    }
+  }
+}</pre>
+        </article>
+      </div>
+
+      <article class="interface-panel">
+        <h3>Пример REST интеграции Home Assistant</h3>
+        <p>Файл: /homeassistant/configuration.yaml</p>
+        <pre class="code-block"># Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+rest:
+  - resource: "https://rest-api.netcraze.pro/rci/show/log"
+    method: POST
+    authentication: basic
+    username: "tplung"
+    password: "tplung"
+    headers:
+      Content-Type: "application/json"
+    payload: '{"max-lines":15,"once":"false"}'
+    scan_interval: 10
+    sensor:
+      - name: "Sensor Kitchen Temperature"
+        unique_id: "tplung_kitchen_temp_unique_01"
+        unit_of_measurement: "°C"
+        device_class: temperature
+        value_template: &gt;
+          {% set raw = value_json.log.values() | map(attribute='message.message') | select('string') | list %}
+          {% set parsed = raw
+            | map('regex_replace', '\\^M$', '')
+            | select('match', '^\\{.*\\}$')
+            | map('from_json')
+            | list %}
+          {% set match = parsed | selectattr('mac', 'eq', 'E4:83:A9:68:8A:B8') | list %}
+          {{ match[-1].t1 | float }}
+        availability: &gt;
+          {% if value_json is defined and value_json.log is defined %}
+            {% set raw = value_json.log.values() | map(attribute='message.message') | select('string') | list %}
+            {% set parsed = raw | map('regex_replace', '\\^M$', '') | select('match', '^\\{.*\\}$') | map('from_json') | list %}
+            {{ parsed | selectattr('mac', 'eq', 'E4:83:A9:68:8A:B8') | list | length &gt; 0 }}
+          {% else %}
+            false
+          {% endif %}
+
+      - name: "Sensor Kitchen Humidity"
+        unique_id: "tplung_kitchen_hum_unique_01"
+        unit_of_measurement: "%"
+        device_class: humidity
+        value_template: &gt;
+          {% set raw = value_json.log.values() | map(attribute='message.message') | select('string') | list %}
+          {% set parsed = raw | map('regex_replace', '\\^M$', '') | select('match', '^\\{.*\\}$') | map('from_json') | list %}
+          {% set match = parsed | selectattr('mac', 'eq', 'E4:83:A9:68:8A:B8') | list %}
+          {{ match[-1].H1 | float }}
+        availability: &gt;
+          {% if value_json is defined and value_json.log is defined %}
+            {% set raw = value_json.log.values() | map(attribute='message.message') | select('string') | list %}
+            {% set parsed = raw | map('regex_replace', '\\^M$', '') | select('match', '^\\{.*\\}$') | map('from_json') | list %}
+            {{ parsed | selectattr('mac', 'eq', 'E4:83:A9:68:8A:B8') | list | length &gt; 0 }}
+          {% else %}
+            false
+          {% endif %}
+
+      - name: "Sensor Outdoor Temperature T1"
+        unique_id: "tplung_outdoor_temp_unique_02"
+        unit_of_measurement: "°C"
+        device_class: temperature
+        value_template: &gt;
+          {% set raw = value_json.log.values() | map(attribute='message.message') | select('string') | list %}
+          {% set parsed = raw | map('regex_replace', '\\^M$', '') | select('match', '^\\{.*\\}$') | map('from_json') | list %}
+          {% set match = parsed | selectattr('mac', 'eq', '5C:53:10:AB:C5:CB') | list %}
+          {{ match[-1].T1 | float }}
+        availability: &gt;
+          {% if value_json is defined and value_json.log is defined %}
+            {% set raw = value_json.log.values() | map(attribute='message.message') | select('string') | list %}
+            {% set parsed = raw | map('regex_replace', '\\^M$', '') | select('match', '^\\{.*\\}$') | map('from_json') | list %}
+            {{ parsed | selectattr('mac', 'eq', '5C:53:10:AB:C5:CB') | list | length &gt; 0 }}
+          {% else %}
+            false
+          {% endif %}</pre>
+      </article>
     </section>
   </main>
+
+  <div class="photo-lightbox" id="keeneticLightbox" aria-hidden="true">
+    <button class="lightbox-backdrop" type="button" aria-label="Закрыть просмотр"></button>
+    <figure class="lightbox-frame">
+      <button class="lightbox-close" type="button" aria-label="Закрыть">&times;</button>
+      <img id="keeneticLightboxImage" src="" alt="" />
+      <figcaption id="keeneticLightboxCaption"></figcaption>
+    </figure>
+  </div>
 
   <footer class="site-footer">
     <span>TPlung Sensor Gateway</span>
@@ -230,5 +441,97 @@ Attachment: 7z_data.7z</pre>
     <a href="./index.html">Главная</a>
     <a href="./live.html">TPlung Live</a>
   </footer>
+
+  <script>
+    (function () {
+      const lightbox = document.getElementById("keeneticLightbox");
+      const lightboxImage = document.getElementById("keeneticLightboxImage");
+      const lightboxCaption = document.getElementById("keeneticLightboxCaption");
+      const closeButton = lightbox.querySelector(".lightbox-close");
+      const backdrop = lightbox.querySelector(".lightbox-backdrop");
+      const openButtons = document.querySelectorAll(".keenetic-shot-open");
+
+      function closeLightbox() {
+        lightbox.classList.remove("is-open");
+        lightbox.setAttribute("aria-hidden", "true");
+        lightboxImage.removeAttribute("src");
+        lightboxImage.removeAttribute("alt");
+        lightboxCaption.textContent = "";
+      }
+
+      openButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const source = button.getAttribute("data-lightbox-src") || "";
+          const caption = button.getAttribute("data-lightbox-caption") || "";
+          const image = button.querySelector("img");
+          const altText = image ? image.getAttribute("alt") || "" : "";
+
+          lightboxImage.setAttribute("src", source);
+          lightboxImage.setAttribute("alt", altText);
+          lightboxCaption.textContent = caption;
+          lightbox.classList.add("is-open");
+          lightbox.setAttribute("aria-hidden", "false");
+        });
+      });
+
+      closeButton.addEventListener("click", closeLightbox);
+      backdrop.addEventListener("click", closeLightbox);
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && lightbox.classList.contains("is-open")) {
+          closeLightbox();
+        }
+      });
+
+      function scrollToHashTarget() {
+        if (!window.location.hash) {
+          return;
+        }
+        const targetId = window.location.hash.slice(1);
+        const target = document.getElementById(targetId);
+        if (!target) {
+          return;
+        }
+        target.scrollIntoView({ block: "start", behavior: "auto" });
+      }
+
+      function scheduleHashScroll() {
+        // Repeat scroll several times to compensate for late layout shifts (images/fonts).
+        [0, 120, 400, 900, 1500].forEach((delay) => {
+          window.setTimeout(scrollToHashTarget, delay);
+        });
+      }
+
+      function navigateToHash(hash) {
+        if (!hash || hash === "#") {
+          return;
+        }
+        const target = document.querySelector(hash);
+        if (!target) {
+          return;
+        }
+        history.pushState(null, "", hash);
+        target.scrollIntoView({ block: "start", behavior: "auto" });
+      }
+
+      document.querySelectorAll('a[href^="#"]').forEach((link) => {
+        link.addEventListener("click", (event) => {
+          const hash = link.getAttribute("href") || "";
+          if (!hash || hash === "#") {
+            return;
+          }
+          event.preventDefault();
+          navigateToHash(hash);
+        });
+      });
+
+      window.addEventListener("DOMContentLoaded", scheduleHashScroll);
+      window.addEventListener("load", scheduleHashScroll);
+
+      window.addEventListener("hashchange", () => {
+        scheduleHashScroll();
+      });
+    })();
+  </script>
 </body>
 </html>
