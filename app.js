@@ -162,9 +162,9 @@ class ThermoSerialClient {
     if (!this.writer) {
       return;
     }
-    await this.sendCmd("at01");
+    await this.sendCmd("at01\r\n");
     await sleep(50);
-    await this.sendCmd("at03");
+    await this.sendCmd("at03\r\n");
   }
 
   clearRx() {
@@ -186,18 +186,18 @@ class ThermoSerialClient {
       this.clearRx();
 
       if (scanEnabled) {
-        await this.sendCmd("at00");
+        await this.sendCmd("at00\r\n");
         await sleep(scanSec * 1000);
 
-        await this.sendCmd("at01");
+        await this.sendCmd("at01\r\n");
         await sleep(500);
       }
 
       if (measureEnabled) {
-        await this.sendCmd("at02");
+        await this.sendCmd("at02\r\n");
         await sleep(2000);
 
-        await this.sendCmd("at03");
+        await this.sendCmd("at03\r\n");
       }
 
       const snapshot = this.rx;
