@@ -45,13 +45,13 @@
           </figure>
           <div class="carousel-controls">
             <div class="carousel-buy-row">
-              <b id="photoCarouselPrice">1500 ₽</b>
+              <b id="photoCarouselPrice">3000 ₽</b>
               <button class="buy-toggle btn btn-primary" type="button" id="buyToggleBtn" aria-expanded="false" aria-controls="buyPanel">Купить</button>
             </div>
             <button class="carousel-btn" type="button" id="photoPrevBtn" aria-label="Предыдущее фото">‹</button>
             <div class="carousel-meta">
               <span id="photoCarouselCounter">1 / 2</span>
-              <strong id="photoCarouselCaption">Закрытый корпус с платой</strong>
+              <strong id="photoCarouselCaption">В корпусе 50x50x20 IP20</strong>
             </div>
             <button class="carousel-btn" type="button" id="photoNextBtn" aria-label="Следующее фото">›</button>
             <div class="buy-panel" id="buyPanel" hidden>
@@ -60,7 +60,7 @@
                   <span>Кол-во</span>
                   <input type="number" id="buyQuantity" min="1" max="99" step="1" value="1" inputmode="numeric" />
                 </label>
-                <output class="buy-total" id="buyTotal">1500 ₽</output>
+                <output class="buy-total" id="buyTotal">3000 ₽</output>
               </div>
               <button class="btn btn-primary buy-pay" type="button" id="sbpPayBtn">Оплатить QR</button>
             </div>
@@ -515,17 +515,17 @@
   <script>
     (() => {
       const photos = [
-        { src: "./assets/photos/photo_2026-06-19_22-47-48.jpg", alt: "Закрытый корпус с платой", price: "1500 ₽", shape: "portrait" },
-        { src: "./assets/photos/photo_2026-06-19_22-48-08.jpg", alt: "CH592F с прошивкой TPlung", price: "1200 ₽", shape: "portrait" }
+        { src: "./assets/photos/photo_2026-06-19_22-47-48.jpg", alt: "В корпусе 50x50x20 IP20", price: "3000 ₽", shape: "portrait" },
+        { src: "./assets/photos/photo_2026-06-19_22-48-08.jpg", alt: "В корпусе 100x29x100 IP20", price: "3500 ₽", shape: "portrait" }
       ];
 
       const galleryPhotos = [
-        { src: "./assets/photos/photo_2026-06-19_22-47-36.jpg", alt: "Корпус с кабелем", price: "1500 ₽", shape: "portrait" },
-        { src: "./assets/photos/photo_2026-06-19_22-47-25.jpg", alt: "Плата с USB", price: "1200 ₽", shape: "portrait" },
-        { src: "./assets/photos/photo_2026-06-19_22-47-52.jpg", alt: "Плата в корпусе", price: "1500 ₽", shape: "landscape" },
-        { src: "./assets/photos/photo_2026-06-19_22-47-56.jpg", alt: "Корпус с гребенкой", price: "1500 ₽", shape: "portrait" },
-        { src: "./assets/photos/photo_2026-06-19_22-48-00.jpg", alt: "Вид сбоку", price: "1500 ₽", shape: "portrait" },
-        { src: "./assets/photos/photo_2026-06-19_22-48-04.jpg", alt: "Сдвинутая крышка", price: "1500 ₽", shape: "portrait" }
+        { src: "./assets/photos/photo_2026-06-19_22-47-36.jpg", alt: "Корпус с кабелем", price: "3000 ₽", shape: "portrait" },
+        { src: "./assets/photos/photo_2026-06-19_22-47-25.jpg", alt: "Плата с USB", price: "3000 ₽", shape: "portrait" },
+        { src: "./assets/photos/photo_2026-06-19_22-47-52.jpg", alt: "Плата в корпусе", price: "3000 ₽", shape: "landscape" },
+        { src: "./assets/photos/photo_2026-06-19_22-47-56.jpg", alt: "Корпус с гребенкой", price: "3000 ₽", shape: "portrait" },
+        { src: "./assets/photos/photo_2026-06-19_22-48-00.jpg", alt: "Вид сбоку", price: "3000 ₽", shape: "portrait" },
+        { src: "./assets/photos/photo_2026-06-19_22-48-04.jpg", alt: "Сдвинутая крышка", price: "3000 ₽", shape: "portrait" }
       ];
 
       const sbpConfig = {
